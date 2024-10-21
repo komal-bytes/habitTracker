@@ -1,7 +1,7 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
-import Home from "@/pages/home";
 import DefaultLayout from "@/layouts/default";
+import Home from "./pages/Home";
 import Daily from "./pages/Daily";
 import Habits from "./pages/Habits";
 import Settings from "./pages/Settings";
