@@ -21,12 +21,18 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import tsconfigPaths from 'vite-tsconfig-paths'
-import fs from 'fs';
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
   plugins: [
     react(),
     tsconfigPaths(),
+    basicSsl({
+      // Optional: Customize your SSL configuration
+      name: 'habito', // Name of the certificate
+      domains: ['*.custom.com'], // Custom trust domains (optional)
+      // certDir: '/path/to/cert/directory', // Custom certification directory (optional)
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
@@ -67,9 +73,12 @@ export default defineConfig({
     })
   ],
   server: {
-    https: {
-      key: fs.readFileSync('C:\\Program Files\\mkcert\\localhost-key.pem'),
-      cert: fs.readFileSync('C:\\Program Files\\mkcert\\localhost.pem')
-    }
-  }
+    https: true, // Enable HTTPS
+  },
+  // server: {
+  //   https: {
+  //     key: fs.readFileSync('C:\\Program Files\\mkcert\\localhost-key.pem'),
+  //     cert: fs.readFileSync('C:\\Program Files\\mkcert\\localhost.pem')
+  //   }
+  // }
 });
