@@ -27,6 +27,8 @@ export const useTheme = (defaultTheme?: Theme) => {
 
   const _setTheme = (theme: Theme) => {
     localStorage.setItem(ThemeProps.key, theme);
+    let userInfo = { ...JSON.parse(localStorage.getItem("userInfo")), theme: theme };
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
     document.documentElement.classList.remove(
       ThemeProps.light,
       ThemeProps.dark,
@@ -40,11 +42,14 @@ export const useTheme = (defaultTheme?: Theme) => {
   const setDarkTheme = () => _setTheme(ThemeProps.dark);
 
   const toggleTheme = () => {
-    theme === ThemeProps.dark ? setLightTheme() : setDarkTheme();
-    console.log(theme)
-    let userInfo = { ...JSON.parse(localStorage.getItem("userInfo")), theme: theme };
-    localStorage.setItem("userInfo", JSON.stringify(userInfo));
-    // localStorage.setItem("userInfo", { ...JSON.parse(localStorage.getItem("userInfo")), "theme": theme }))
+    // theme === ThemeProps.dark ? setLightTheme() : setDarkTheme();
+    if (theme === ThemeProps.dark) {
+      setLightTheme();
+      return "light";
+    } else {
+      setDarkTheme();
+      return "dark";
+    }
   }
   useEffect(() => {
     _setTheme(theme);

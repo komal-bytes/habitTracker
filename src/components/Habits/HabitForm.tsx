@@ -228,6 +228,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
         setTimeout(() => {
             onClose();
             onLoaderClose();
+            setSelectedHabit({});
         }, 2000)
     }
 

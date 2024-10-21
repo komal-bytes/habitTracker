@@ -8,17 +8,21 @@ import { Button, useDisclosure } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
-
+import Lottie from "react-lottie-player";
+import empty from "@/utils/animations/empty.json";
 
 const Habits: React.FC = () => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [habitsData, setHabitsData] = useState([]);
     const [selectedHabit, setSelectedHabit] = useState({});
+    const [showTooltip, setShowTooltip] = useState<Number | boolean>(false);
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
     useEffect(() => {
-        getListOfHabits()
+        (async()=>{
+            await getListOfHabits()
+        })()
     }, [isOpen])
 
     const getListOfHabits = async () => {
@@ -34,16 +38,34 @@ const Habits: React.FC = () => {
     // console.log(habitsData)
 
     return (
-        <div className="relative h-full w-full flex-column items-center justify-start">
+        <div className="relative h-full w-full flex-column items-center justify-start"
+            onClick={(e) => {
+                e.stopPropagation();
+                setShowTooltip(false)
+            }}
+        >
+
+            {
+                habitsData.length === 0
+                &&
+                <div className='flex justify-center'>
+                    <Lottie
+                        loop
+                        animationData={empty}
+                        play
+                        style={{ width: 250, height: 250 }}
+                    />
+                </div>
+            }
 
             <div className="space-y-3">
                 {habitsData.map(habit => (
                     <div
                         key={habit.id}
-                        className="flex justify-between items-center bg-white p-4 rounded-2xl border border-grey cursor-pointer"
+                        className="flex justify-between items-center p-4 rounded-2xl border border-grey cursor-pointer"
                         onClick={() => {
                             setSelectedHabit(habit)
-                            onOpen()
+                            onOpen();
                         }}
                     >
                         <div className="flex items-center">
@@ -58,7 +80,7 @@ const Habits: React.FC = () => {
                         </div>
                         <div className="flex items-center space-x-2">
 
-                            <ToggleHabit habit={habit} getListOfHabits={getListOfHabits} />
+                            <ToggleHabit habit={habit} getListOfHabits={getListOfHabits} showTooltip={showTooltip} setShowTooltip={setShowTooltip} />
 
                             <div className="rounded-full border-2 border-grey flex items-center justify-center w-8 h-8 bg-gray-200">
                                 <MdDeleteOutline className="text-2xl text-black" onClick={(e) => {
@@ -81,7 +103,7 @@ const Habits: React.FC = () => {
                 New Habit
             </Button>
 
-            {console.log(isDeleteOpen, selectedHabit)}
+            {/* {console.log(isDeleteOpen, selectedHabit)} */}
             {isDeleteOpen && <DeleteHabitModal isOpen={isDeleteOpen} onClose={onDeleteClose} selectedHabit={selectedHabit} getListOfHabits={getListOfHabits} />}
 
             {isOpen && <HabitForm isOpen={isOpen} onClose={onClose} selectedHabit={selectedHabit} setSelectedHabit={setSelectedHabit} />}

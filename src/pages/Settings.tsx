@@ -6,24 +6,25 @@ import { TimeInput } from "@nextui-org/date-input";
 import { FiSun } from "react-icons/fi";
 import { FaMoon } from "react-icons/fa6";
 import { FaRegEdit } from "react-icons/fa";
-import { useTheme } from "@/hooks/use-theme";
+// import { useTheme } from "@/hooks/use-theme";
 import { ThemeSwitch } from '@/components/common/theme-switch';
 import { formatTime, parseTime } from '@/utils/habitFunctions';
 import { useOutletContext } from 'react-router-dom';
+import { useTheme } from 'next-themes';
+import { MoonFilledIcon, SunFilledIcon } from '@/components/common/icons';
 
+const Settings: React.FC = () => {
 
-const Settings: React.FC<SettingsProps> = () => {
-
+    const { theme, setTheme } = useTheme();
     const { userInfo, setUserInfo } = useOutletContext();
-    const { theme, toggleTheme } = useTheme(userInfo?.theme || "light");
+
+    // const { theme, toggleTheme } = useTheme(userInfo?.theme || "light");
     const [profile, setProfile] = useState<string | null>(userInfo?.avatar);
     const [showIcons, setShowIcons] = useState(false);
     const [name, setName] = useState<string | null>(userInfo?.name);
     const [isEditingName, setIsEditingName] = useState(false);
     const [reminderTime, setReminderTime] = useState<Object>(parseTime(userInfo?.progressReminderTime));
     const [isEditingTime, setIsEditingTime] = useState(false);
-
-
 
     const handleProfileChange = (icon: string) => {
         let imageName = icon.split("/")[2].split('.')[0];
@@ -81,20 +82,22 @@ const Settings: React.FC<SettingsProps> = () => {
                     className="rounded-full w-[200px] h-[200px]"
                 />
                 {showIcons ? (
-                    <div className="flex flex-wrap space-x-2 mt-2 border-2 border-gray-200 p-4 rounded-lg">
-                        {Object.values(userIcons).map((icon, idx) => (
-                            <img
+                    <div className="flex flex-wrap items-center space-x-2 mt-2 border-2 border-gray-200 p-4 rounded-lg">
+                        {Object.values(userIcons).map((icon, idx) => {
+                            console.log(icon)
+                            return < img
                                 key={idx}
                                 src={icon}
-                                alt={`icon-${idx}`}
-                                className="w-14 h-14 cursor-pointer"
+                                alt={`icon-${idx}`
+                                }
+                                className={`${icon === "/icons/user.png" ? 'w-[53px] h-[53px]' : "w-[57px] h-[57px]"} cursor-pointer`}
                                 onClick={() => handleProfileChange(icon)}
                             />
-                        ))}
+                        })}
                     </div>
                 ) : (
                     <Button
-                        className="mt-2 bg-button-gradient text-white"
+                        className="mt-4 bg-button-gradient text-white"
                         onClick={() => setShowIcons(true)}
                     >
                         Change
@@ -129,14 +132,20 @@ const Settings: React.FC<SettingsProps> = () => {
 
                 {/* Theme Toggle */}
                 <div className="flex items-center mt-4 space-x-4">
-                    <p>Change Theme to {theme}</p>
-                    {/* {isDark ? 'Light' : 'Dark'} */}
+                    <p>Change Theme to {theme === "dark" ? 'light' : 'dark'}</p>
                     {/* {isDark ? (
                     <FiSun className="cursor-pointer" onClick={handleThemeToggle} />
                 ) : (
                     <FaMoon className="cursor-pointer" onClick={handleThemeToggle} />
                 )} */}
-                    <ThemeSwitch theme={theme} toggleTheme={toggleTheme} />
+                    {/* <ThemeSwitch theme={theme} toggleTheme={toggleTheme} setUserInfo={setUserInfo} /> */}
+
+                    {theme === "light" ? (
+                        <MoonFilledIcon className='cursor-pointer' size={22} onClick={() => setTheme('dark')} />
+                    ) : (
+                        <SunFilledIcon className='cursor-pointer' size={22} onClick={() => setTheme('light')} />
+                    )}
+
                 </div>
 
                 {/* Progress Update Reminder Time */}
@@ -162,7 +171,7 @@ const Settings: React.FC<SettingsProps> = () => {
 
             {/* Footer */}
             <div className="mt-8 text-center mb-2 absolute bottom-0">
-                <p className="text-sm">Made with ❤️ by <span className="text-primary">Komal Tolambia</span></p>
+                <p className="text-sm">Built with ❤️ by <span className="text-secondary">Komal Tolambia</span></p>
             </div>
         </div>
     );

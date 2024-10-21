@@ -78,7 +78,7 @@ export const habitIconTypes = {
 
 
 
-import user from "/icons/user.jpg";
+import user from "/icons/user.png";
 import oldMan from "/icons/old-man.png";
 import boy from "/icons/boy.png";
 import man from "/icons/man.png";

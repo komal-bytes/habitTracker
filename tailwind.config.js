@@ -25,8 +25,9 @@ module.exports = {
         // themeRed: "#ff0059f"
       },
       boxShadow: {
-        "custom-blue": '0 10px 20px -5px rgba(89, 169, 253, 0.5)',
-        'custom-black': '0 1px 15px 4px rgba(0,0,0,0.2)'
+        "custom-blue": '0 10px 20px -5px rgba(89, 169, 253, 0.2)',
+        'custom-black': '0 1px 15px 4px rgba(0,0,0,0.2)', //shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.1)]
+        'custom-white': '0 -4px 10px -2px rgba(255, 255, 255, 0.1)' 
       },
       fontFamily: {
         'caveat': ['"Caveat"', 'cursive'],

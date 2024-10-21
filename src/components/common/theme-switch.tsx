@@ -12,20 +12,30 @@ export interface ThemeSwitchProps {
   className?: string;
   classNames?: SwitchProps["classNames"];
   theme: String,
-  toggleTheme: Function
+  toggleTheme: Function,
+  setUserInfo: Function
 }
 
 export const ThemeSwitch: FC<ThemeSwitchProps> = ({
   className,
   classNames,
   theme,
-  toggleTheme
+  toggleTheme,
+  setUserInfo
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   // const { theme, toggleTheme } = useTheme();
 
-  const onChange = toggleTheme;
+  const onChange = () => {
+    let newTheme = toggleTheme();
+    setUserInfo((prev:Object) => {
+      return {
+        ...prev,
+        theme: newTheme
+      }
+    })
+  }
 
   const {
     Component,

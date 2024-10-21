@@ -26,8 +26,6 @@ export async function getAllHabits(): Promise<Habit[]> {
     }
 }
 
-let habits = await getAllHabits();
-console.log(habits);
 
 //Function to fetch today's list of habits
 export const getCurrentHabits = async (): Promise<any[]> => {
@@ -154,6 +152,9 @@ export const updateScheduledDates = async () => {
         const habits = await db.habits.toArray();
 
         for (const habit of habits) {
+          
+            // if (habit.isPaused) continue;
+
             const currentScheduledDate = new Date(habit.currentScheduledDate).toISOString().split('T')[0];
             if (currentScheduledDate < currentDate) {
                 let lastScheduledFor;
@@ -334,6 +335,7 @@ export const createTrackLogs = async (habitObject: Habit) => {
         const habits: Habit[] = habitObject ? [habitObject] : await db.habits.toArray();
         console.log(habits)
         for (const habit of habits) {
+            if (habit.isPaused) continue;
             const trackLogs = await db.trackLogs.where('habitId').equals(habit.id).toArray();
             trackLogs.sort((a, b) => new Date(a.trackingDate).getTime() - new Date(b.trackingDate).getTime());
 
@@ -538,44 +540,43 @@ export const queryLogs = async (type: 'Daily' | 'Weekly' | 'Monthly', habitId: s
 
 
 // Function to resume a habit
-const resumeHabit = async (habitId: number): Promise<void> => {
-    try {
+// const resumeHabit = async (habitId: number): Promise<void> => {
+//     try {
 
-        const habit = await db.habits.get(habitId);
-        if (!habit) {
-            throw new Error("Habit not found");
-        }
+//         const habit = await db.habits.get(habitId);
+//         if (!habit) {
+//             throw new Error("Habit not found");
+//         }
 
-        habit.isPaused = false;
+//         habit.isPaused = false;
 
-        // Get the current date to use as lastScheduledDate
-        const lastScheduledDate = new Date().toISOString(); // Use ISO format for consistency
+//         //Don't need all of this because we are gonna update the scheduled dates of the habit everytime whether its paused or not
+//         // Get the current date to use as lastScheduledDate
+//         // const lastScheduledDate = new Date().toISOString();
 
-        let currentlyScheduledFor;
-        let nextScheduledFor;
+//         // let currentlyScheduledFor;
+//         // let nextScheduledFor;
 
-        if (habit.frequencyType === 'Custom') {
-            const dates = calculateNextScheduledDateForCustom({ type: habit.customFrequencyType, value: habit.frequencyValue }, lastScheduledDate);
-            currentlyScheduledFor = dates.currentlyScheduledFor;
-            nextScheduledFor = dates.nextScheduledFor;
-        } else {
-            const dates = calculateCurrentAndNextScheduledDate(habit.frequencyType, habit);
-            currentlyScheduledFor = dates.currentlyScheduledFor;
-            nextScheduledFor = dates.nextScheduledFor;
-        }
+//         // if (habit.frequencyType === 'Custom') {
+//         //     const dates = calculateNextScheduledDateForCustom({ type: habit.customFrequencyType, value: habit.frequencyValue }, lastScheduledDate);
+//         //     currentlyScheduledFor = dates.currentlyScheduledFor;
+//         //     nextScheduledFor = dates.nextScheduledFor;
+//         // } else {
+//         //     const dates = calculateCurrentAndNextScheduledDate(habit.frequencyType, habit);
+//         //     currentlyScheduledFor = dates.currentlyScheduledFor;
+//         //     nextScheduledFor = dates.nextScheduledFor;
+//         // }
 
-        await db.habits.update(habitId, {
-            isPaused: false,
-            currentScheduledDate: currentlyScheduledFor.toISOString(),
-            nextScheduledDate: nextScheduledFor.toISOString(),
-        });
+//         await db.habits.update(habitId, {
+//             isPaused: false,
+//         });
 
-        console.log("Habit resumed successfully:", habitId);
-    } catch (error) {
-        console.error("Error resuming habit:", error);
-        throw error;
-    }
-};
+//         console.log("Habit resumed successfully:", habitId);
+//     } catch (error) {
+//         console.error("Error resuming habit:", error);
+//         throw error;
+//     }
+// };
 
 // resumeHabit(1)
 //     .then(() => {

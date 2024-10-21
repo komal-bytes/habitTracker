@@ -8,11 +8,12 @@ import { updateHabitDetails } from '@/utils/habitFunctions';
 
 interface ToggleHabitProps {
     habit: Object,
-    getListOfHabits: Function
+    getListOfHabits: Function,
+    showTooltip: Boolean | Number,
+    setShowTooltip: Function
 }
 
-const ToggleHabit: React.FC<ToggleHabitProps> = ({ habit, getListOfHabits }) => {
-    const [showTooltip, setShowTooltip] = useState("");
+const ToggleHabit: React.FC<ToggleHabitProps> = ({ habit, getListOfHabits, showTooltip, setShowTooltip }) => {
 
     const pauseOrResumeHabit = async (pause: boolean, habit: object) => {
         try {
@@ -23,7 +24,7 @@ const ToggleHabit: React.FC<ToggleHabitProps> = ({ habit, getListOfHabits }) => 
             setShowTooltip(false);
         }
     }
-
+    
     return (
         <div className="relative">
             {
@@ -71,7 +72,8 @@ const ToggleHabit: React.FC<ToggleHabitProps> = ({ habit, getListOfHabits }) => 
                 className="rounded-full border-2 border-gray-400 flex items-center justify-center w-8 h-8 bg-gray-200 cursor-pointer"
                 onClick={(e) => {
                     e.stopPropagation()
-                    setShowTooltip(habit.id)}}
+                    setShowTooltip(habit.id)
+                }}
             >
                 {habit?.isPaused ? <RxResume className="text-2xl text-black" /> : <MdOutlinePause className="text-2xl text-black" />}
             </div>

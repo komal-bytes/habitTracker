@@ -5,7 +5,7 @@ import DefaultLayout from "@/layouts/default";
 import Daily from "./pages/Daily";
 import Habits from "./pages/Habits";
 import Settings from "./pages/Settings";
-import Logs from "./pages/Logs";
+import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from "react";
 import { createTrackLogs, updateScheduledDates } from "./utils/habitFunctions";
 import Progress from "./pages/Progress";
@@ -57,9 +57,12 @@ function Layout() {
 
   const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")))
 
-  return <DefaultLayout userInfo={userInfo}>
-    <Outlet context={{ userInfo, setUserInfo }}/>
-  </DefaultLayout>
+  return <ThemeProvider attribute="class" defaultTheme="light">
+    <DefaultLayout userInfo={userInfo}>
+      <Outlet context={{ userInfo, setUserInfo }} />
+    </DefaultLayout>
+  </ThemeProvider>
+
 }
 
 function App() {

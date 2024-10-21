@@ -14,14 +14,15 @@ import happy from "/icons/happy.png";
 import happiest from "/icons/happiest.png";
 import { createLogAndUpdateHabit, fetchDailyHabitLogByHabitId, formatTime, getCurrentHabits, updateLogDetails } from '@/utils/habitFunctions';
 import CreateHabitLoader from '@/components/Habits/CreateHabitLoader';
+import empty from "@/utils/animations/empty.json";
+import Lottie from 'react-lottie-player';
+import { useOutletContext } from 'react-router-dom';
 
-// const habitsData = [
-//     { id: 1, name: "Sleep", icon: <FaBed size={25} />, progress: 100, time: "11:30 pm", iconType: "health" },
-//     { id: 2, name: "Cycling", icon: <FaBicycle size={25} />, progress: 65, time: "5:30 am", iconType: "fitness" },
-//     { id: 3, name: "Read Book", icon: <FaBook size={25} />, progress: 85, time: "6:00 pm", iconType: "productivity" },
-// ];
 
 const Daily: React.FC = () => {
+
+    const { userInfo, setUserInfo } = useOutletContext();
+    console.log(userInfo?.theme)
     const [selectedHabit, setSelectedHabit] = useState<number | null>(null);
     const [progress, setProgress] = useState<number>(5);
     const [notes, setNotes] = useState<string>("");
@@ -38,13 +39,12 @@ const Daily: React.FC = () => {
     }, [])
 
     useEffect(() => {
-         createLog();
+        createLog();
     }, [])
 
     const createLog = async () => {
         let habitsList = await getCurrentHabits();
-        console.log(habitsList)
-        const dailyLogs = {};
+        // console.log(habitsList)
         for (let i = 0; i < habitsList.length; i++) {
             // console.log(res.id)
             let habit = habitsList[i]
@@ -119,7 +119,7 @@ const Daily: React.FC = () => {
         } else if (completePercentage === 100) {
             return "Completed";
         } else {
-            return "Invalid percentage"; // Handle invalid input
+            return "Invalid percentage";
         }
     };
 
@@ -134,11 +134,24 @@ const Daily: React.FC = () => {
             {/* Today's Habits Section */}
             <div>
                 <h2 className="text-2xl font-bold mb-5">Today Habits</h2>
+                {
+                    habitsData.length === 0
+                    &&
+                    <div className='flex justify-center'>
+                        <Lottie
+                            loop
+                            animationData={empty}
+                            play
+                            style={{ width: 250, height: 250 }}
+                        />
+                    </div>
+                }
+
                 <div className="space-y-2">
                     {habitsData.map(habit => (
                         <div
                             key={habit.id}
-                            className="flex justify-between items-center bg-white p-4 rounded-2xl border border-grey cursor-pointer"
+                            className={`flex justify-between items-center p-4 rounded-2xl border border-grey cursor-pointer`}
                             onClick={() => handleOpen(habit)}
                         >
                             <div className="flex items-center">
@@ -211,7 +224,7 @@ const Daily: React.FC = () => {
                             {/* Title */}
                             <div className='flex justify-center items-center mb-6'>
                                 <h2 className="text-center text-lg font-semibold mr-2">Update Your Progress</h2>
-                                <img src={celebrate} alt="" className="w-10" />
+                                {/* <img src={celebrate} alt="" className="w-10 bg-transparent border-3 border-red-500" /> */}
                             </div>
 
                             <div className={`m-auto rounded-full w-[40px] h-[40px] flex items-center justify-center border ${habitIconTypes[selectedHabit?.iconType]?.gradient}`}>
