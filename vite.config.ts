@@ -56,24 +56,29 @@ export default defineConfig({
         ]
       },
       workbox: {
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-stylesheets',
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              }
-            }
-          }
-        ]
-      }
+        cleanupOutdatedCaches: true,
+        globPatterns: ["/", "*/.{mjs,js,css,html,png,svg,ico,jpeg,json}"],
+      },
+    
+      // workbox: {
+      //   runtimeCaching: [
+      //     {
+      //       urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
+      //       handler: 'CacheFirst',
+      //       options: {
+      //         cacheName: 'google-fonts-stylesheets',
+      //         expiration: {
+      //           maxEntries: 20,
+      //           maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+      //         }
+      //       }
+      //     }
+      //   ]
+      // }
     })
   ],
-  server: {
-    https: true, // Enable HTTPS
+server: {
+  https: true, // Enable HTTPS
   },
   // server: {
   //   https: {

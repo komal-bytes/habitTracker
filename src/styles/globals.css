@@ -12,13 +12,13 @@ body {
     font-family: "Inter", sans-serif;
 }
 
-@tailwind base;
-
-/* Custom Scrollbar Styles */
-
 /* width */
 ::-webkit-scrollbar {
     width: 5px;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 /* Track */
@@ -35,6 +35,3 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #a0aec0;
 }
-
-@tailwind components;
-@tailwind utilities;

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import { Select, Button, SelectItem } from '@nextui-org/react';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { queryLogs } from '@/utils/habitFunctions';
-// import { getCompletionRate } from './yourHelperFile'; // Your function to get the completion rate
 
 ChartJS.register(
     CategoryScale,
@@ -36,23 +35,6 @@ const Graph: React.FC<Props> = ({ selectedHabit }) => {
         setCompletionRate(completionRate)
         setData(logs)
         setAnalyse(true)
-        // if (type === 'Daily') {
-        //     setData([
-        //         { date: '2024-01-01', count: 70 },
-        //         { date: '2024-01-02', count: 80 },
-        //         { date: '2024-01-03', count: 90 },
-        //     ]);
-        // } else if (type === 'Weekly') {
-        //     setData([
-        //         { weekRange: 'Week 1', count: 75 },
-        //         { weekRange: 'Week 2', count: 80 },
-        //     ]);
-        // } else if (type === 'Monthly') {
-        //     setData([
-        //         { monthName: 'January', count: 85 },
-        //         { monthName: 'February', count: 90 },
-        //     ]);
-        // }
     };
 
 
@@ -66,23 +48,69 @@ const Graph: React.FC<Props> = ({ selectedHabit }) => {
         return years;
     };
 
-    // Chart data based on selected type
     const chartData = {
-        // Get the keys (date, weekRange, or monthName) based on selected type for labels
         labels: Object.keys(data),
 
         datasets: [
             {
-                // Label will dynamically change based on the selected type (Daily/Weekly/Monthly)
                 label: `${type} Progress`,
 
-                // Get the values (percentage complete for each date, week, or month)
                 data: Object.values(data),
                 borderWidth: 2,
                 borderColor: 'orange',
                 backgroundColor: 'rgba(255, 165, 0, 0.3)',
+
             },
         ],
+    };
+
+    const chartOptions = {
+        responsive: true, // Make the chart responsive
+        // plugins: {
+        //     legend: {
+        //         labels: {
+        //             font: {
+        //                 size: 14, // Font size of legend labels
+        //             },
+        //             color: '#333', // Color of legend text
+        //         },
+        //     },
+        //     tooltip: {
+        //         backgroundColor: 'rgba(0,0,0,0.8)', // Tooltip background color
+        //         titleColor: '#fff', // Tooltip title color
+        //         bodyColor: '#fff', // Tooltip body color
+        //         borderWidth: 1, // Border width of the tooltip
+        //         borderColor: 'orange', // Border color of the tooltip
+        //         displayColors: false, // Disable color boxes in the tooltip
+        //     },
+        // },
+        // scales: {
+        //     x: {
+        //         grid: {
+        //             display: true, // Show grid lines on the x-axis
+        //             color: 'rgba(255, 165, 0, 0.2)', // Grid line color on the x-axis
+        //             borderDash: [5, 5], // Dashed lines for x-axis grid
+        //         },
+        //         ticks: {
+        //             color: 'orange', // Color of x-axis labels
+        //             font: {
+        //                 size: 12, // Font size of x-axis labels
+        //             },
+        //         },
+        //     },
+        //     y: {
+        //         grid: {
+        //             display: true, // Show grid lines on the y-axis
+        //             color: 'rgba(255, 165, 0, 0.2)', // Grid line color on the y-axis
+        //         },
+        //         ticks: {
+        //             color: 'orange', // Color of y-axis labels
+        //             font: {
+        //                 size: 12, // Font size of y-axis labels
+        //             },
+        //         },
+        //     },
+        // },
     };
 
     const updateFilters = (e: any) => {
@@ -92,8 +120,6 @@ const Graph: React.FC<Props> = ({ selectedHabit }) => {
 
         setAnalyse(false);
     }
-
-    console.log(chartData)
 
     return (
         <div className="flex-column p-8">
@@ -154,7 +180,7 @@ const Graph: React.FC<Props> = ({ selectedHabit }) => {
                 >Analyse</Button>
             </div>
 
-            <div className="flex justify-between items-center mt-4">
+            <div className="flex justify-between items-center my-4">
                 {
                     completionRate != null && analyse
                     &&
@@ -166,9 +192,9 @@ const Graph: React.FC<Props> = ({ selectedHabit }) => {
             {
                 (Object.keys(data).length > 0 && analyse)
                 &&
-                <div className="w-full h-64">
+                <div className="w-full h-[200px]">
                     {type === 'Daily' ? (
-                        <Line data={chartData} />
+                        <Line data={chartData}/>
                     ) : (
                         <Bar data={chartData} />
                     )}

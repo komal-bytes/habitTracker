@@ -13,7 +13,6 @@ interface DefaultLayoutProps {
 }
 
 export default function DefaultLayout({ children, userInfo }: DefaultLayoutProps) {
-  console.log(userInfo)
   const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("daily");
   const today = calculateCurrentdate();
@@ -40,7 +39,7 @@ export default function DefaultLayout({ children, userInfo }: DefaultLayoutProps
   return (
     <div className="relative flex flex-col h-screen">
 
-      <div className={`sticky top-0 z-50 flex p-3 flex items-center ${theme === "light" ? "bg-white" : "bg-black"}`}>
+      <div className={`flex p-3 flex items-center ${theme === "light" ? "bg-white" : "bg-black"}`}>
         <Image src={userIcons[userInfo?.avatar] || userIcons.user} className={`m-2 w-[45px] h-[45px] `} />
         <div>
           <h1 className="text-xl font-bold">Hello, {userInfo?.name || "Mate"}</h1>
@@ -48,10 +47,11 @@ export default function DefaultLayout({ children, userInfo }: DefaultLayoutProps
         </div>
       </div>
 
-      < main className="w-full py-2 px-5 w-full h-full flex-grow" >
+      < main className="w-full py-2 px-5 w-full h-full flex-grow [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overflow-y-scroll" >
         {children}
       </ main >
-      <nav className={`fixed w-full bottom-0 left-0 z-50 p-4 m-2 flex justify-around ${theme === "light" ? "bg-white" : "bg-black"} rounded-full  ${theme === "dark" ? "shadow-custom-white" : "shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.1)]"}`}>
+
+      <nav className={`w-full p-4 m-2 flex justify-around ${theme === "light" ? "bg-white" : "bg-black"} rounded-full  ${theme === "dark" ? "shadow-custom-white" : "shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.1)]"}`}>
         {[
           { id: "daily", link: '/daily', icon: CheckCircle2, label: "Daily" },
           { id: "habits", link: '/habits', icon: ListTodo, label: "Habits" },

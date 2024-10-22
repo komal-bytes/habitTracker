@@ -14,7 +14,7 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
-   console.log(habitLog, 'habit log')
+
     const [selectedMonth, setSelectedMonth] = useState(dayjs().month()); // 0: January, 11: December
     const [selectedYear, setSelectedYear] = useState(dayjs().year());
     const [showTooltip, setShowTooltip] = useState("");
@@ -70,24 +70,13 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
                 >
                     <div
                         key={i}
-                        className={`relative flex justify-center items-center cursor-pointer w-10 h-10 rounded-full m-2 text-center border
+                        className={`relative flex justify-center items-center flex-wrap cursor-pointer w-10 h-10 rounded-full my-2 mx-[0px] text-center border
             ${isToday ? 'bg-neutral-300 text-gray-900 border-none' : 'bg-white text-gray-900 border-gray-300'}`}
                         onClick={(e) => {
                             e.stopPropagation();
                             setShowTooltip(log?.id)
                         }}
                     >
-                        {/* Circle progress if there is a complete percentage */}
-                        {/* {completePercentage > 0 && (
-                        <div
-                            className="absolute w-8 h-8 border-2 border-orange-500 rounded-full"
-                            style={{
-                                borderWidth : "2.5px",
-                                clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
-                                transform: `rotate(${(completePercentage / 100) * 360}deg)`,
-                            }}
-                        />
-                    )} */}
                         <CircularProgress
                             size="md"
                             value={completePercentage}
@@ -110,14 +99,14 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
     };
 
     return (
-        <div className="flex flex-col items-center p-4"
+        <div className="flex flex-col items-center w-full m-auto p-4"
             onClick={(e) => {
                 e.stopPropagation();
                 setShowTooltip(false)
             }}
         >
             {/* Month and Year Selector */}
-            <div className="flex justify-between items-center w-full max-w-md mb-4">
+            <div className="flex justify-between items-center w-full mb-4">
                 <button onClick={handlePreviousMonth} className="p-2 bg-orange-500 text-white rounded-full">
                     &lt;
                 </button>
@@ -132,7 +121,7 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
             </div>
 
             {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-2 w-full">
                 {/* Weekday Labels */}
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                     <div key={day} className="text-center font-semibold">

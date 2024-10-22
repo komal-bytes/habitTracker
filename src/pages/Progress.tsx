@@ -37,15 +37,16 @@ const Progress = () => {
     console.log(selectedHabit, "selected")
 
     return (
-        <div className="h-auto pb-[100px]">
+        <div className="h-auto p-2">
             {/* Dropdown to Select Habit */}
-            <div className="mb-6 w-full max-w-xs">
+            <div className="mb-6 w-full md:w-1/2 lg:w-1/4">
 
                 <Select
                     label="Select a Habit"
                     variant="bordered"
                     name="habitName"
                     aria-label="habitName"
+                    // className='w-[80%]'
                     // selectedKeys={[selectedHabit?.key]}
                     value={selectedHabit?.key}
                     onChange={(e) => {
@@ -70,7 +71,7 @@ const Progress = () => {
                     <p className='text-danger text-3xl'>Check Your Progress</p>
                 </div>
             ) : (
-                <div className="border flex-col items-center justify-center p-6 rounded-lg w-full max-w-xl m-auto text-center">
+                <div className="border flex-col items-center justify-center py-4 rounded-lg w-full md:w-2/3 lg:w-2/5 m-auto text-center">
                     {/* Habit Icon */}
                     <div className={`m-auto mb-2 border-4 border-neutral-300 rounded-full w-[180px] h-[180px] flex items-center justify-center border ${habitIconTypes[selectedHabit?.iconType]?.gradient}`}>
                         <img
@@ -87,7 +88,7 @@ const Progress = () => {
                     <p className='text-gray-500 mb-4 textcenter'>{selectedHabit?.frequencyType === "Custom" ? selectedHabit?.customFrequency : selectedHabit.frequencyType}</p>
 
                     {/* Streak Information */}
-                    <div className="flex justify-around border border-gray-300 rounded-lg w-[400px] m-auto p-4 mb-4">
+                    <div className="flex justify-around border border-gray-300 rounded-lg w-[90%] m-auto p-4 mb-4">
                         <div>
                             <p className="text-secondary text-lg font-semibold">{selectedHabit.currentStreak} days</p>
                             <p className="text-gray-400">Current streak</p>
@@ -104,11 +105,12 @@ const Progress = () => {
                         aria-label="Options"
                         selectedKey={selectedTab}
                         onSelectionChange={setSelectedTab}
+                        className='w-[90%]'
                         classNames={{
-                            tabList: "gap-6 w-[400px] bg-gray-300",
+                            tabList: "gap-6 w-full bg-gray-300",
                             // cursor: "w-full bg-[#22d3ee]",
-                            // tab: "w-1/2 px-0 h-12",
-                            tabContent: "group-data-[selected=true]:text-gray-400"
+                            // tab: "w-2/3 border border-red-500",
+                            tabContent: "group-data-[selected=true]:text-gray-400 text-center"
                         }}
                     >
                         <Tab key="Calender View" title="Calender View">

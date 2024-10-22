@@ -96,7 +96,7 @@ const Habits: React.FC = () => {
 
             {/* Absolute positioned button */}
             <Button
-                className="absolute bottom-[12%] left-1/2 bg-button-gradient text-white text-lg transform -translate-x-1/2 shadow-custom-blue"
+                className="absolute bottom-[5px] left-1/2 bg-button-gradient text-white text-lg transform -translate-x-1/2 shadow-custom-blue"
                 onClick={onOpen}
             >
                 <MdAdd className="text-xl" />
