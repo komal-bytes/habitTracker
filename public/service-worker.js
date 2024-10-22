@@ -1,43 +1,43 @@
-// In service-worker.js
-self.addEventListener("install", (event) => {
-    console.log("installed")
-    event.waitUntil(self.skipWaiting());
-})
-
-// self.addEventListener("fetch", () => {
-//     console.log("fetched")
+// // In service-worker.js
+// self.addEventListener("install", (event) => {
+//     console.log("installed")
+//     event.waitUntil(self.skipWaiting());
 // })
 
-self.addEventListener("activate", (event) => {
-    console.log("activated")
-    event.waitUntil(self.clients.claim());
-})
+// // self.addEventListener("fetch", () => {
+// //     console.log("fetched")
+// // })
 
-self.addEventListener('activate', function (event) {
+// self.addEventListener("activate", (event) => {
+//     console.log("activated")
+//     event.waitUntil(self.clients.claim());
+// })
 
-    console.log(event.data);
+// self.addEventListener('activate', function (event) {
 
-    const data = event.data ? event.data?.json() : {};
+//     console.log(event.data);
 
-    const options = {
-        body: data.body || 'Default message body',
-        actions: [{ action: 'update', title: 'Update' }],
-        //   icon: '/icon.png', // Optional icon for notification
-        //   badge: '/badge.png', // Optional badge icon
-        data: {
-            url: data.url || '/settings#progressUpdate',
-        },
-    };
+//     const data = event.data ? event.data?.json() : {};
 
-    console.log("here")
-    event.waitUntil(
-        self.registration.showNotification(data.title || 'Reminder!', options)
-    );
-});
+//     const options = {
+//         body: data.body || 'Default message body',
+//         actions: [{ action: 'update', title: 'Update' }],
+//         //   icon: '/icon.png', // Optional icon for notification
+//         //   badge: '/badge.png', // Optional badge icon
+//         data: {
+//             url: data.url || '/settings#progressUpdate',
+//         },
+//     };
 
-self.addEventListener('notificationclick', function (event) {
-    event.notification.close();
-    if (event.action === 'update') {
-        clients.openWindow(event.notification.data.url);
-    }
-});
+//     console.log("here")
+//     event.waitUntil(
+//         self.registration.showNotification(data.title || 'Reminder!', options)
+//     );
+// });
+
+// self.addEventListener('notificationclick', function (event) {
+//     event.notification.close();
+//     if (event.action === 'update') {
+//         clients.openWindow(event.notification.data.url);
+//     }
+// });
