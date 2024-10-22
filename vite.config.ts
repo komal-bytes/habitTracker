@@ -63,7 +63,7 @@ export default defineConfig({
       },
       injectRegister: false,
       // HERE! For custom service worker
-      srcDir: path.resolve(__dirname, '/utils/'),
+      srcDir: path.resolve(__dirname, 'src/utils/'),
       filename: 'service-worker.js',
       strategies: 'injectManifest',
       workbox: {
