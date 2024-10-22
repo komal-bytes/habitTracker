@@ -20,7 +20,7 @@ const Habits: React.FC = () => {
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
     useEffect(() => {
-        (async()=>{
+        (async () => {
             await getListOfHabits()
         })()
     }, [isOpen])
@@ -34,6 +34,12 @@ const Habits: React.FC = () => {
         }
     }
 
+    function showNotification(title, body) {
+        new Notification(title, {
+            body: body,
+            icon: "path/to/icon.png", // Optional: path to an icon
+        });
+    }
 
     // console.log(habitsData)
 
