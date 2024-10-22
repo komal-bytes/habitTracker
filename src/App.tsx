@@ -22,30 +22,30 @@ function Layout() {
     }
   }, []);
 
-  useEffect(() => {
-    const registerServiceWorker = async () => {
-      if ('serviceWorker' in navigator) {
-        // Get all existing service worker registrations
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        const isServiceWorkerRegistered = registrations.some(reg => reg.active?.scriptURL.includes('/service-worker.js'));
+  // useEffect(() => {
+  //   const registerServiceWorker = async () => {
+  //     if ('serviceWorker' in navigator) {
+  //       // Get all existing service worker registrations
+  //       const registrations = await navigator.serviceWorker.getRegistrations();
+  //       const isServiceWorkerRegistered = registrations.some(reg => reg.active?.scriptURL.includes('/service-worker.js'));
 
-        // Register the service worker only if it is not already registered
-        if (!isServiceWorkerRegistered) {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => {
-              console.log('Service Worker Registered!', reg);
-            })
-            .catch(error => {
-              console.error('Service Worker registration failed:', error);
-            });
-        } else {
-          console.log('Service Worker is already registered.');
-        }
-      }
-    };
+  //       // Register the service worker only if it is not already registered
+  //       if (!isServiceWorkerRegistered) {
+  //         navigator.serviceWorker.register('/service-worker.js')
+  //           .then(reg => {
+  //             console.log('Service Worker Registered!', reg);
+  //           })
+  //           .catch(error => {
+  //             console.error('Service Worker registration failed:', error);
+  //           });
+  //       } else {
+  //         console.log('Service Worker is already registered.');
+  //       }
+  //     }
+  //   };
 
-    registerServiceWorker();
-  }, []);
+  //   registerServiceWorker();
+  // }, []);
 
   useEffect(() => {
     (async () => {
