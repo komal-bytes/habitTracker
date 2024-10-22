@@ -1,3 +1,9 @@
+import { precacheAndRoute } from 'workbox-precaching';
+
+// Add the precache manifest here
+precacheAndRoute(self.__WB_MANIFEST || []);
+
+
 // Receive push notifications
 self.addEventListener('push', function (e) {
     if (!(self.Notification && self.Notification.permission === 'granted')) {
