@@ -47,8 +47,8 @@ export default function DefaultLayout({ children, userInfo }: DefaultLayoutProps
         </div>
       </div>
 
-      <main className="relative h-[78vh]">
-        <div className="overflow-y-scroll py-2 px-5 w-full h-[100%] flex-grow [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <main className="relative flex-grow overflow-y-scroll">
+        <div className="py-2 px-5 w-full h-[100%] overflow-y-scroll flex-grow [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {children}
         </div>
       </ main >

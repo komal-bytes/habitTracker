@@ -24,7 +24,7 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({ logs }) => {
             countValue += log.completePercentage;
         }
         setCompletedTask(count);
-        setGoalProgress((countValue / (tasksCount * 100)) * 100);
+        setGoalProgress(((countValue / (tasksCount * 100)) * 100).toFixed(2));
     }, [logs])
 
     return (
