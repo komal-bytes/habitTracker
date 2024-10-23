@@ -58,7 +58,6 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({ logs }) => {
                         }}
                         size="md"
                         aria-label="Progress Bar"
-                        value={goalProgress}
                     />
                 </div>
 

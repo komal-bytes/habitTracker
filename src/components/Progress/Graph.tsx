@@ -64,53 +64,25 @@ const Graph: React.FC<Props> = ({ selectedHabit }) => {
         ],
     };
 
-    const chartOptions = {
-        responsive: true, // Make the chart responsive
-        // plugins: {
-        //     legend: {
-        //         labels: {
-        //             font: {
-        //                 size: 14, // Font size of legend labels
-        //             },
-        //             color: '#333', // Color of legend text
-        //         },
-        //     },
-        //     tooltip: {
-        //         backgroundColor: 'rgba(0,0,0,0.8)', // Tooltip background color
-        //         titleColor: '#fff', // Tooltip title color
-        //         bodyColor: '#fff', // Tooltip body color
-        //         borderWidth: 1, // Border width of the tooltip
-        //         borderColor: 'orange', // Border color of the tooltip
-        //         displayColors: false, // Disable color boxes in the tooltip
-        //     },
-        // },
-        // scales: {
-        //     x: {
-        //         grid: {
-        //             display: true, // Show grid lines on the x-axis
-        //             color: 'rgba(255, 165, 0, 0.2)', // Grid line color on the x-axis
-        //             borderDash: [5, 5], // Dashed lines for x-axis grid
-        //         },
-        //         ticks: {
-        //             color: 'orange', // Color of x-axis labels
-        //             font: {
-        //                 size: 12, // Font size of x-axis labels
-        //             },
-        //         },
-        //     },
-        //     y: {
-        //         grid: {
-        //             display: true, // Show grid lines on the y-axis
-        //             color: 'rgba(255, 165, 0, 0.2)', // Grid line color on the y-axis
-        //         },
-        //         ticks: {
-        //             color: 'orange', // Color of y-axis labels
-        //             font: {
-        //                 size: 12, // Font size of y-axis labels
-        //             },
-        //         },
-        //     },
-        // },
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,  // This allows the chart to resize based on its container
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 14,  // Adjust font size for mobile readability
+                    },
+                },
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 14,
+                    },
+                },
+            },
+        },
     };
 
     const updateFilters = (e: any) => {
@@ -192,11 +164,11 @@ const Graph: React.FC<Props> = ({ selectedHabit }) => {
             {
                 (Object.keys(data).length > 0 && analyse)
                 &&
-                <div className="w-full h-[200px]">
+                <div className="w-full h-[250px] md:h-[300px] lg:h-[350px]">
                     {type === 'Daily' ? (
-                        <Line data={chartData}/>
+                        <Line data={chartData} options={options} />
                     ) : (
-                        <Bar data={chartData} />
+                        <Bar data={chartData} options={options} />
                     )}
                 </div>
             }

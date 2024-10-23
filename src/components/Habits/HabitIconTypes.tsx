@@ -4,9 +4,11 @@ import { Tooltip } from '@nextui-org/react';
 
 interface HabitIconTypesProps {
     habit: object,
-    setHabit: Function
+    setHabit: Function,
+    showTooltip: String | Boolean,
+    setShowTooltip: Function
 }
-const HabitIconTypes: React.FC<HabitIconTypesProps> = ({ habit, setHabit }) => {
+const HabitIconTypes: React.FC<HabitIconTypesProps> = ({ habit, setHabit, showTooltip, setShowTooltip }) => {
 
     // Handle click on an icon
     const handleClick = (iconType: string) => {
@@ -16,10 +18,16 @@ const HabitIconTypes: React.FC<HabitIconTypesProps> = ({ habit, setHabit }) => {
                 iconType
             }
         })
+        setShowTooltip(iconType)
     };
 
     return (
-        <div className="grid grid-cols-4 gap-4 justify-center items-center p-6 rounded-lg shadow-[0_4px_15px_0_rgba(0,0,0,0.1)] my-4">
+        <div className="grid grid-cols-4 gap-4 justify-center items-center p-6 rounded-lg shadow-[0_4px_15px_0_rgba(0,0,0,0.1)] my-4"
+            onClick={(e) => {
+                e.stopPropagation()
+                setShowTooltip(false)
+            }}
+        >
             {Object.keys(habitIconTypes).map((iconType) => {
                 const { icon, gradient, name } = habitIconTypes[iconType as keyof typeof habitIconTypes];
 
@@ -38,10 +46,14 @@ const HabitIconTypes: React.FC<HabitIconTypesProps> = ({ habit, setHabit }) => {
                                 "text-black bg-gradient-to-br from-white to-neutral-300",
                             ],
                         }}
+                        isOpen={showTooltip === iconType}
+                    // onOpenChange={setShowTooltip}
                     >
                         <div
                             key={iconType}
-                            onClick={() => handleClick(iconType)}
+                            onClick={(e) =>{
+                                e.stopPropagation();
+                                handleClick(iconType)}}
                             className={`
                             ${gradient} 
                             rounded-full w-[60px] h-[60px] p-3 flex justify-center items-center 

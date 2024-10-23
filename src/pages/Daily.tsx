@@ -22,7 +22,6 @@ import { useOutletContext } from 'react-router-dom';
 const Daily: React.FC = () => {
 
     const { userInfo, setUserInfo } = useOutletContext();
-    console.log(userInfo?.theme)
     const [selectedHabit, setSelectedHabit] = useState<number | null>(null);
     const [progress, setProgress] = useState<number>(5);
     const [notes, setNotes] = useState<string>("");

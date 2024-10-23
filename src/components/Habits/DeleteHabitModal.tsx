@@ -8,12 +8,13 @@ import HabitIconTypes from './HabitIconTypes';
 
 interface DeleteHabitModalProps {
     isOpen: boolean;
-    onClose: () => void;
-    selectedHabit: number,
+    onClose: () => void,
+    selectedHabit: Object,
+    setSelectedHabit: Function,
     getListOfHabits: Function
 }
 
-const DeleteHabitModal: React.FC<DeleteHabitModalProps> = ({ isOpen, onClose, selectedHabit, getListOfHabits }) => {
+const DeleteHabitModal: React.FC<DeleteHabitModalProps> = ({ isOpen, onClose, selectedHabit, setSelectedHabit, getListOfHabits }) => {
 
     const { isOpen: isLoaderOpen, onOpen: onLoaderOpen, onClose: onLoaderClose } = useDisclosure();
     const [loader, setLoader] = useState("");
@@ -29,6 +30,7 @@ const DeleteHabitModal: React.FC<DeleteHabitModalProps> = ({ isOpen, onClose, se
         setTimeout(() => {
             onClose();
             onLoaderClose();
+            setSelectedHabit({})
             getListOfHabits();
         }, 2000)
     }

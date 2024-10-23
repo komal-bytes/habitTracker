@@ -54,7 +54,7 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
                     placement="top"
                     content={`Notes: ${log?.notes}`}
                     isOpen={showTooltip === log?.id}
-                    // onOpenChange={setShowTooltip}
+                    onOpenChange={setShowTooltip}
                     className={`${!log?.notes ? 'hidden' : ''}`}
                     classNames={{
                         base: [
@@ -70,7 +70,7 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
                 >
                     <div
                         key={i}
-                        className={`relative flex justify-center items-center flex-wrap cursor-pointer w-10 h-10 rounded-full my-2 mx-[0px] text-center border
+                        className={`relative flex justify-center items-center flex-wrap cursor-pointer w-8 h-8 md:w-10 md:h-10 rounded-full my-2 mx-0 text-center border
             ${isToday ? 'bg-neutral-300 text-gray-900 border-none' : 'bg-white text-gray-900 border-gray-300'}`}
                         onClick={(e) => {
                             e.stopPropagation();

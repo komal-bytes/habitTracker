@@ -1,7 +1,7 @@
 import db, { TrackLog } from '@/config/db';
 import { Habit, Log } from '@/config/db';
 import { calculateCurrentAndNextScheduledDate, calculateNextScheduledDate, calculateNextScheduledDateForCustom } from './schedulingFunctions';
-import { Chrono } from 'chrono-node';
+import * as chrono from 'chrono-node';
 
 // Function to add a new habit
 export async function addHabit(habit: Habit): Promise<number> {
@@ -31,18 +31,20 @@ export async function getAllHabits(): Promise<Habit[]> {
 export const getCurrentHabits = async (): Promise<any[]> => {
     const today = new Date();
     const formattedToday = today.toDateString();
-    console.log(formattedToday)
     try {
 
         const habits = await db.habits
             .filter(habit => {
                 const scheduledDate = new Date(habit.currentScheduledDate);
-                console.log(scheduledDate.toDateString())
                 return scheduledDate.toDateString() === formattedToday && !habit.isPaused;
             })
             .toArray();
 
-        return habits;
+        return habits.sort((a, b) => {
+            const timeA = a.time.hour * 3600000 + a.time.minute * 60000 + a.time.second * 1000 + a.time.millisecond;
+            const timeB = b.time.hour * 3600000 + b.time.minute * 60000 + b.time.second * 1000 + b.time.millisecond;
+            return timeA - timeB;
+        });
 
     } catch (error) {
         console.error("Error retrieving habits:", error);
@@ -67,14 +69,14 @@ export async function updateHabitDetails(habitId: number, updatedHabit: Partial<
 export async function deleteHabit(habitId: number): Promise<boolean> {
     try {
         const deleted = await db.habits.delete(habitId);
+        const a = await db.logs.where('habitId').equals(habitId).delete();
+        const b = await db.trackLogs.where('habitId').equals(habitId).delete();
         return deleted > 0;
     } catch (error) {
         console.error("Failed to delete habit:", error);
         throw error;
     }
 }
-
-// await deleteHabit(1);
 
 
 interface logProps {
@@ -88,7 +90,7 @@ interface logProps {
 export const createLogAndUpdateHabit = async (log: logProps): Promise<void> => {
     try {
         const { habitId, completePercentage, notes, completionDate } = log;
-        console.log(habitId)
+        // console.log(habitId)
         const habit = await db.habits.get(habitId);
         if (!habit) {
             throw new Error("Habit not found");
@@ -152,7 +154,7 @@ export const updateScheduledDates = async () => {
         const habits = await db.habits.toArray();
 
         for (const habit of habits) {
-          
+
             // if (habit.isPaused) continue;
 
             const currentScheduledDate = new Date(habit.currentScheduledDate).toISOString().split('T')[0];
@@ -161,24 +163,11 @@ export const updateScheduledDates = async () => {
                 let currentlyScheduledFor;
                 let nextScheduledFor;
 
-                if (habit.frequencyType === 'Custom') {
-                    const dates = calculateNextScheduledDateForCustom(
-                        { type: habit.customFrequencyType, value: habit.frequencyValue },
-                        habit.currentScheduledDate,
-                        habit.nextScheduledDate
-                    );
-                    lastScheduledFor = dates.lastScheduledFor;
-                    currentlyScheduledFor = dates.currentlyScheduledFor;
-                    nextScheduledFor = dates.nextScheduledFor;
-                } else {
-                    const dates = calculateNextScheduledDate(habit.frequencyType, habit, habit.currentScheduledDate, habit.nextScheduledDate);
-                    console.log(dates, "dates")
-                    lastScheduledFor = dates.lastScheduledFor;
-                    currentlyScheduledFor = dates.currentlyScheduledFor;
-                    nextScheduledFor = dates.nextScheduledFor;
-                }
-
-                // console.log(lastScheduledFor, currentlyScheduledFor, nextScheduledFor, "dates here");
+                const dates = calculateNextScheduledDate(habit.frequencyType, habit, habit.currentScheduledDate);
+                console.log(dates, "dates")
+                lastScheduledFor = dates.lastScheduledFor;
+                currentlyScheduledFor = dates.currentlyScheduledFor;
+                nextScheduledFor = dates.nextScheduledFor;
 
                 await db.habits.update(habit.id!, {
                     lastScheduledDate: lastScheduledFor.toISOString(),
@@ -187,6 +176,7 @@ export const updateScheduledDates = async () => {
                 });
             }
         }
+
     } catch (error) {
         console.error("Error updating scheduled dates:", error);
         throw error;
@@ -329,7 +319,7 @@ export const getLogsByHabitId = async (habitId: number): Promise<Log[]> => {
 //     });
 
 
-export const createTrackLogs = async (habitObject: Habit) => {
+export const createTrackLogs = async (habitObject?: Habit) => {
 
     try {
         const habits: Habit[] = habitObject ? [habitObject] : await db.habits.toArray();
@@ -366,9 +356,9 @@ export const createTrackLogs = async (habitObject: Habit) => {
                     startDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + 1)).toISOString().split('T')[0];
                 }
             } else if (frequencyType === 'Specific Days') {
-                const specificDays = habit.specificDays;
+                const specificDays = habit.specificFrequencyDays;
                 while (startDate <= today) {
-                    const dayOfWeek = startDate.getDay();
+                    const dayOfWeek = new Date(startDate).getDay();
                     if (specificDays.includes(dayOfWeek)) {
                         await db.trackLogs.add({
                             habitId: habit.id,
@@ -382,8 +372,8 @@ export const createTrackLogs = async (habitObject: Habit) => {
                 const frequencyValue = habit.frequencyValue;
                 const customFrequencyType = habit.customFrequencyType;
 
-                if (habitObject?.customStartDay) {
-                    startDate = Chrono.parseDate(customStartDay);
+                if (!latestLog) {
+                    startDate = new Date(habit.customStartDay).toISOString().split('T')[0];
                 }
 
                 while (startDate <= today) {
@@ -463,15 +453,17 @@ export const queryLogs = async (type: 'Daily' | 'Weekly' | 'Monthly', habitId: s
             const daysInMonth = new Date(year, month!, 0).getDate(); // Get total days in the month
 
             for (let day = 1; day <= daysInMonth; day++) {
-                const dateKey = `${year}-${month!.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                dailyLogs[dateKey] = 0; // Initialize with count 0
+                const dateKey = `${new Intl.DateTimeFormat('en-US', { month: 'short' }).format(new Date(year, month! - 1))} ${day.toString().padStart(2, '0')}`;
+                //`${year}-${month!.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                dailyLogs[dateKey] = 0;
             }
 
             logs.forEach(log => {
-                const logDate = log.completionDate.split('T')[0]; // Get only the date part (YYYY-MM-DD)
+                const logDate = `${new Intl.DateTimeFormat('en-US', { month: 'short' }).format(new Date(log.completionDate))} ${new Date(log.completionDate).getDate().toString().padStart(2, '0')}`
+                //log.completionDate.split('T')[0];
                 // console.log(logDate)
                 if (dailyLogs[logDate] != undefined) {
-                    dailyLogs[logDate] += log.completePercentage; // Increment by completePercentage
+                    dailyLogs[logDate] += log.completePercentage;
                     completeCount += log.completePercentage;
                 }
             });
@@ -483,25 +475,25 @@ export const queryLogs = async (type: 'Daily' | 'Weekly' | 'Monthly', habitId: s
         } else if (type === 'Weekly') {
             const weeklyLogs = {};
             const startOfMonth = new Date(year, month! - 1, 1);
-            const endOfMonth = new Date(year, month!, 0); // Last day of the month
-
+            const endOfMonth = new Date(year, month!, 0);
+            let weekCount = 1;
             let currentWeekStart = startOfMonth;
             while (currentWeekStart <= endOfMonth) {
                 const currentWeekEnd = new Date(currentWeekStart);
-                currentWeekEnd.setDate(currentWeekEnd.getDate() + 6); // End of the week
-
-                const weekRange = `${currentWeekStart.toISOString().split('T')[0]} to ${currentWeekEnd > endOfMonth ? endOfMonth.toISOString().split('T')[0] : currentWeekEnd.toISOString().split('T')[0]}`;
-                weeklyLogs[weekRange] = 0; // Initialize with count 0
+                currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
+                const weekRange = `week ${weekCount}`;//`${currentWeekStart.toISOString().split('T')[0]} to ${currentWeekEnd > endOfMonth ? endOfMonth.toISOString().split('T')[0] : currentWeekEnd.toISOString().split('T')[0]}`;
+                weekCount++;
+                weeklyLogs[weekRange] = 0;
 
                 logs.forEach(log => {
                     const logDate = new Date(log.completionDate);
                     if (logDate >= currentWeekStart && logDate <= currentWeekEnd) {
-                        weeklyLogs[weekRange] += log.completePercentage; // Increment by completePercentage for that week
+                        weeklyLogs[weekRange] += log.completePercentage;
                         completeCount += log.completePercentage;
                     }
                 });
 
-                currentWeekStart.setDate(currentWeekStart.getDate() + 7); // Move to next week
+                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
             }
 
             // const totalDaysInMonth = new Date(year, month!, 0).getDate();
@@ -512,15 +504,14 @@ export const queryLogs = async (type: 'Daily' | 'Weekly' | 'Monthly', habitId: s
         } else if (type === 'Monthly') {
             const monthlyLogs = {};
 
-            for (let m = 0; m < 12; m++) { // Loop through all months in the year
+            for (let m = 0; m < 12; m++) {
                 const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(year, m));
 
-                monthlyLogs[monthName] = 0; // Initialize with count 0
-
+                monthlyLogs[monthName] = 0;
                 logs.forEach(log => {
                     const logDate = new Date(log.completionDate);
-                    if (logDate.getMonth() === m) { // Check if log is in this month
-                        monthlyLogs[monthName] += log.completePercentage; // Increment by completePercentage
+                    if (logDate.getMonth() === m) {
+                        monthlyLogs[monthName] += log.completePercentage;
                         completeCount += log.completePercentage;
                     }
                 });
@@ -698,4 +689,27 @@ export function parseTime(formattedTime: string): TimeObject | null {
     }
 
     return { hour, minute };
+}
+
+
+//Parse custom frequency
+export function parseFrequency(input: string) {
+    // Regular expression to match frequency and start date
+    const regex = /every (\d+) (days|weeks|months|hours|minutes) starting (.+)/i;
+    const match = input.match(regex);
+    if (!match) {
+        // setFrequencyFormatError();
+        return { error: "Invalid format. Expected format: 'Every X type starting Y'" }
+    }
+
+    const value = parseInt(match[1], 10); // Extracting the numeric value
+    const type = match[2]; // Extracting the type (days, weeks, etc.)
+    const startDay = chrono.parseDate(match[3]); // Extracting the start day (e.g., "next Monday")
+
+    if (startDay === null) {
+        // setFrequencyFormatError();
+        return { error: "Invalid format. Expected format: 'Every X type starting Y'" }
+    }
+
+    return { value, type, startDay };
 }

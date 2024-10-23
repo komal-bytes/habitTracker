@@ -7,20 +7,21 @@ import { CustomCheckbox } from "@/components/Home/CustomCheckbox";
 import * as chrono from 'chrono-node';
 import { GoGoal } from "react-icons/go";
 import { getLocalTimeZone, today } from "@internationalized/date";
-import { calculateCurrentAndNextScheduledDate, calculateNextScheduledDate, calculateNextScheduledDateForCustom } from "@/utils/schedulingFunctions";
+import { calculateCurrentAndNextScheduledDate, calculateNextScheduledDateForCustom } from "@/utils/schedulingFunctions";
 import CreateHabitLoader from "@/components/Habits/CreateHabitLoader";
 import { useNavigate } from "react-router-dom";
-import { addHabit, updateHabitDetails } from "@/utils/habitFunctions";
+import { addHabit, parseFrequency, updateHabitDetails } from "@/utils/habitFunctions";
 import HabitIconTypes from "./HabitIconTypes";
 
 interface HabitFormProps {
     isOpen: boolean;
     onClose: Function;
+    onOpenChange: Function;
     selectedHabit: Object;
     setSelectedHabit: Function
 }
 
-const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, setSelectedHabit }) => {
+const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, selectedHabit, setSelectedHabit }) => {
 
     const navigate = useNavigate();
     const { isOpen: isLoaderOpen, onOpen: onLoaderOpen, onClose: onLoaderClose } = useDisclosure();
@@ -93,6 +94,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
     const [fadeState, setFadeState] = useState('fade-in');
     const [customFreqPlaceholder, setCustomfreqPlaceholder] = useState(placeholders[0]);
     const [frequencyFormatError, setFrequencyFormatError] = useState("");
+    const [showTooltip, setShowTooltip] = useState(false);
     const [errors, setErrors] = useState({
         habitName: "",
         // category: "",
@@ -163,31 +165,9 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
         })
     }
 
-
-    //Parse custom frequency
-    function parseFrequency(input: string) {
-        // Regular expression to match frequency and start date
-        const regex = /every (\d+) (days|weeks|months|hours|minutes) starting (.+)/i;
-        const match = input.match(regex);
-        if (!match) {
-            setFrequencyFormatError("Invalid format. Expected format: 'Every X type starting Y'");
-            return
-        }
-
-        const value = parseInt(match[1], 10); // Extracting the numeric value
-        const type = match[2]; // Extracting the type (days, weeks, etc.)
-        const startDay = chrono.parseDate(match[3]); // Extracting the start day (e.g., "next Monday")
-
-        if (startDay === null) {
-            setFrequencyFormatError("Invalid format. Expected format: 'Every X type starting Y'");
-            return
-        }
-
-        return { value, type, startDay };
-    }
-
     const createHabit = async () => {
         if (!validateForm()) return;
+        setShowTooltip(false)
         onLoaderOpen();
         setLoader("loading");
         const updatedHabitObj = formatForm();
@@ -202,11 +182,12 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
                 await delayDone()
                 setLoader("error")
             }
-        }, 2000)
+        }, 1000)
     }
 
     const updateHabitDetail = async () => {
         if (!validateForm()) return;
+        setShowTooltip(false)
         onLoaderOpen();
         setLoader("loading");
         const updatedHabitObj = formatForm();
@@ -221,7 +202,31 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
                 await delayDone()
                 setLoader("error")
             }
-        }, 2000)
+        }, 500)
+    }
+
+    const resetHabit = () => {
+        setHabit((prev) => ({
+            ...prev,
+            habitName: "",
+            isPaused: false,
+            frequencyType: "",
+            specificFrequencyDays: [],
+            customFrequency: "",
+            customStartDay: "",
+            isReminderRequired: false,
+            iconType: "",
+            currentStreak: 0,
+            bestStreak: 0,
+            startDate: null,
+            time: null,
+            lastProgressUpdateDate: "",
+            currentScheduledDate: "",
+            nextScheduledDate: "",
+            lastScheduledDate: "",
+            frequencyValue: 0,
+            customFrequencyType: ""
+        }))
     }
 
     const delayDone = async () => {
@@ -229,6 +234,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
             onClose();
             onLoaderClose();
             setSelectedHabit({});
+            resetHabit();
         }, 2000)
     }
 
@@ -257,7 +263,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
 
         if (habit.frequencyType == frequencyType.length) {
             let res = parseFrequency(habit.customFrequency);
-            if (!res) { errorFlag = true; }
+            if (res?.error) { errorFlag = true; setFrequencyFormatError(res.error) }
             else setFrequencyFormatError("");
         }
 
@@ -275,7 +281,9 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
         updateHabitObj.specificFrequencyDays = habit.specificFrequencyDays.sort((a, b) => a - b);
 
         if (updateHabitObj.frequencyType === "Custom") {
-            let { value, type, startDay } = parseFrequency(updateHabitObj?.customFrequency);
+            let res = parseFrequency(updateHabitObj?.customFrequency);
+            if (res.error) setFrequencyFormatError(res.error)
+            let { value, type, startDay } = res;
             updateHabitObj.frequencyValue = value;
             updateHabitObj.customFrequencyType = type;
             updateHabitObj.customStartDay = startDay;
@@ -298,6 +306,8 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
         // updateHabitObj.time = { hour, minute, second, millisecond };
         return updateHabitObj;
     }
+
+    // console.log(selectedHabit)
 
     return (
         <>
@@ -325,7 +335,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
                         },
                     }
                 }}
-                onClose={() => {
+                onOpenChange={(open) => {
                     onClose()
                     setSelectedHabit({})
                 }}
@@ -333,9 +343,8 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1">{Object.keys(selectedHabit).length > 0 ? "Update the Habit Details" : "Create a New Habit"}</ModalHeader>
-                    <ModalBody >
+                    <ModalBody>
                         <Input
-                            autoFocus
                             autoComplete="off"
                             label="Habit Name"
                             placeholder="Read 10 pages daily"
@@ -434,7 +443,6 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
                             habit.frequencyType == frequencyType.length
                             &&
                             <Input
-                                autoFocus
                                 autoComplete="off"
                                 label="Custom frequency"
                                 startContent={
@@ -532,7 +540,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, selectedHabit, s
                         <div>
                             <p className="text-semibold">Choose Icon<span className="text-danger">*</span></p>
                             {errors.iconType && <span className="text-danger text-left text-sm">{errors.iconType}</span>}
-                            <HabitIconTypes habit={habit} setHabit={setHabit} />
+                            <HabitIconTypes habit={habit} setHabit={setHabit} showTooltip={showTooltip} setShowTooltip={setShowTooltip} />
                         </div>
 
                     </ModalBody>

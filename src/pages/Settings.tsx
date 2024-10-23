@@ -73,7 +73,7 @@ const Settings: React.FC = () => {
 
 
     return (
-        <div className="relative flex flex-col items-center justify-between p-4 h-full">
+        <div className="relative flex flex-col items-center justify-between py-4 h-full">
 
             <div>
                 {/* Profile Picture */}
@@ -81,7 +81,7 @@ const Settings: React.FC = () => {
                     <img
                         src={userIcons[profile] || userIcons.user}
                         alt="Profile"
-                        className="rounded-full w-[200px] h-[200px]"
+                        className="rounded-full w-[150px] h-[150px]"
                     />
                     {showIcons ? (
                         <div className="flex flex-wrap items-center space-x-2 mt-2 border-2 border-gray-200 p-4 rounded-lg">
@@ -126,7 +126,6 @@ const Settings: React.FC = () => {
                             >
                                 Save
                             </Button>
-                            // <SaveIcon className="cursor-pointer" onClick={handleNameSave} />
                         ) : (
                             <FaRegEdit className="cursor-pointer text-xl" onClick={() => setIsEditingName(true)} />
                         )}
@@ -135,13 +134,6 @@ const Settings: React.FC = () => {
                     {/* Theme Toggle */}
                     <div className="flex items-center mt-4 space-x-4">
                         <p>Change Theme to {theme === "dark" ? 'light' : 'dark'}</p>
-                        {/* {isDark ? (
-                    <FiSun className="cursor-pointer" onClick={handleThemeToggle} />
-                ) : (
-                    <FaMoon className="cursor-pointer" onClick={handleThemeToggle} />
-                )} */}
-                        {/* <ThemeSwitch theme={theme} toggleTheme={toggleTheme} setUserInfo={setUserInfo} /> */}
-
                         {theme === "light" ? (
                             <MoonFilledIcon className='cursor-pointer' size={22} onClick={() => setTheme('dark')} />
                         ) : (
@@ -151,15 +143,15 @@ const Settings: React.FC = () => {
                     </div>
 
                     {/* Progress Update Reminder Time */}
-                    <div className="flex items-center mt-4 space-x-4">
+                    <div className="flex items-stretch mt-4 space-x-4">
                         {isEditingTime ? (
                             <TimeInput value={reminderTime} onChange={setReminderTime} />
                         ) : (
-                            <p>Progress Update Reminder Time: {formatTime(reminderTime)}</p>
+                            <p className='w-[80%]'>Progress Update Reminder Time: {formatTime(reminderTime)}</p>
                         )}
                         {isEditingTime ? (
                             <Button
-                                className="mt-2 bg-button-gradient text-whitef"
+                                className="mt-2 bg-button-gradient text-white"
                                 onClick={handleTimeSave}
                             >
                                 Save

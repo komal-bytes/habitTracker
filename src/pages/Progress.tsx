@@ -66,9 +66,9 @@ const Progress = () => {
 
             {/* If no habit is selected, show Lottie animation */}
             {!selectedHabit ? (
-                <div className="w-72 h-72 m-auto mt-">
-                    <img src={analysis} alt="" />
-                    <p className='text-danger text-3xl'>Check Your Progress</p>
+                <div className="w-60 h-52 m-auto">
+                    <img src={analysis} alt="" className='w-[85%]' />
+                    <p className='text-danger text-2xl'>Check Your Progress</p>
                 </div>
             ) : (
                 <div className="border flex-col items-center justify-center py-4 rounded-lg w-full md:w-2/3 lg:w-2/5 m-auto text-center">
@@ -90,12 +90,12 @@ const Progress = () => {
                     {/* Streak Information */}
                     <div className="flex justify-around border border-gray-300 rounded-lg w-[90%] m-auto p-4 mb-4">
                         <div>
-                            <p className="text-secondary text-lg font-semibold">{selectedHabit.currentStreak} days</p>
+                            <p className="text-secondary text-lg font-semibold">{selectedHabit.currentStreak} {selectedHabit.currentStreak == 1 ? "day" : "days"}</p>
                             <p className="text-gray-400">Current streak</p>
                         </div>
                         <div className='h-[50px] w-[1px] bg-gray-300'></div>
                         <div>
-                            <p className="text-secondary text-lg font-semibold">{selectedHabit.bestStreak} days</p>
+                            <p className="text-secondary text-lg font-semibold">{selectedHabit.bestStreak} {selectedHabit.bestStreak == 1 ? "day" : "days"}</p>
                             <p className="text-gray-400">Best streak</p>
                         </div>
                     </div>

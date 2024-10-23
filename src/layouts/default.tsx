@@ -39,7 +39,7 @@ export default function DefaultLayout({ children, userInfo }: DefaultLayoutProps
   return (
     <div className="relative flex flex-col h-screen">
 
-      <div className={`flex p-3 flex items-center ${theme === "light" ? "bg-white" : "bg-black"}`}>
+      <div className={`flex p-2 flex items-center ${theme === "light" ? "bg-white" : "bg-black"}`}>
         <Image src={userIcons[userInfo?.avatar] || userIcons.user} className={`m-2 w-[45px] h-[45px] `} />
         <div>
           <h1 className="text-xl font-bold">Hello, {userInfo?.name || "Mate"}</h1>
@@ -47,8 +47,10 @@ export default function DefaultLayout({ children, userInfo }: DefaultLayoutProps
         </div>
       </div>
 
-      < main className="w-full py-2 px-5 w-full h-full flex-grow [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overflow-y-scroll" >
-        {children}
+      <main className="relative h-[78vh]">
+        <div className="overflow-y-scroll py-2 px-5 w-full h-[100%] flex-grow [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {children}
+        </div>
       </ main >
 
       <nav className={`w-full p-4 m-2 flex justify-around ${theme === "light" ? "bg-white" : "bg-black"} rounded-full  ${theme === "dark" ? "shadow-custom-white" : "shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.1)]"}`}>
@@ -60,15 +62,11 @@ export default function DefaultLayout({ children, userInfo }: DefaultLayoutProps
         ].map((tab) => (
           <Link
             key={tab.id}
-            // onClick={() => {
-            //   setActiveTab(tab.id)
-            // }}
             href={tab.link}>
             <tab.icon size={30} className={`${activeTab === tab.id ? "text-primary" : "text-grey"}`} />
           </Link>
         ))}
       </nav>
-      {/* <p className="text-sm">Made with ❤️ by <span className="text-primary">Komal Tolambia</span></p> */}
 
     </div >
   );
