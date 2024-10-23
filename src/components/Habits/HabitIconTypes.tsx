@@ -46,7 +46,7 @@ const HabitIconTypes: React.FC<HabitIconTypesProps> = ({ habit, setHabit, showTo
                                 "text-black bg-gradient-to-br from-white to-neutral-300",
                             ],
                         }}
-                        isOpen={showTooltip === iconType}
+                        // isOpen={showTooltip === iconType}
                     // onOpenChange={setShowTooltip}
                     >
                         <div
