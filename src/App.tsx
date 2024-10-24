@@ -49,7 +49,7 @@ function Layout() {
   };
 
   useEffect(() => {
-    initOneSignal();
+    // initOneSignal();
   }, []);
 
   useEffect(() => {

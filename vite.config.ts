@@ -61,22 +61,19 @@ export default defineConfig({
           }
         ]
       },
-      injectRegister: false,
+      // injectRegister: false,
       // HERE! For custom service worker
-      srcDir: path.resolve(__dirname, 'src/utils/'),
-      filename: 'service-worker.js',
-      strategies: 'injectManifest',
+      // srcDir: path.resolve(__dirname, 'src/utils/'),
+      // filename: 'service-worker.js',
+      // strategies: 'injectManifest',
       workbox: {
         cleanupOutdatedCaches: true,
-        globDirectory: path.resolve(__dirname, 'public'),
+        // globDirectory: path.resolve(__dirname, 'public'),
         globPatterns: ["/", "*/.{mjs,js,css,html,png,svg,ico,jpeg,json}"],
       },
     })
   ],
   server: {
     https: true, // Enable HTTPS
-    headers: {
-      "Service-Worker-Allowed": "/",
-    },
   },
 });
