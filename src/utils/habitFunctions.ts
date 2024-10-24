@@ -628,7 +628,7 @@ export const scheduleNotification = async (habit: Habit) => {
             included_segments: ['Subscribed Users'], // send to all subscribed users
             contents: { en: `This is your scheduled reminder for "${habit?.habitName}".` },
             send_after: time, // Schedule the notification (format: 'YYYY-MM-DD HH:mm:ss')
-            small_icon: "https://ibb.co/Mc4WBr5",
+            small_icon: "https://i.ibb.co/x10PFW8/habito-small.png",
             data: { habitId: habit?.id },
         }),
     });

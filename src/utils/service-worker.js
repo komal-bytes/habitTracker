@@ -1,4 +1,5 @@
 import { precacheAndRoute } from 'workbox-precaching';
+// importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 
 // Add the precache manifest here
 precacheAndRoute(self.__WB_MANIFEST || []);
