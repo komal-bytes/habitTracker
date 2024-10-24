@@ -29,19 +29,23 @@ function Layout() {
       appId: appId,
       allowLocalhostAsSecureOrigin: true, // for local development
     });
-    // OneSignal.showSlidedownPrompt(); // Prompts the user to allow notifications
-    OneSignal.push(() => {
-      OneSignal.isPushNotificationsEnabled((isEnabled) => {
-        if (!isEnabled) {
-          OneSignal.showSlidedownPrompt();
+
+    const isEnabled = await OneSignal.isPushNotificationsEnabled();
+    if (!isEnabled) {
+      OneSignal.showSlidedownPrompt(); // Prompts the user to allow notifications
+    }
+
+    // Use a timeout or callback to ensure the user has had time to respond
+    setTimeout(() => {
+      OneSignal.getUserId().then((userId) => {
+        console.log('OneSignal User ID:', userId);
+        if (userId) {
+          localStorage.setItem('onesignal-userId', userId);
+        } else {
+          console.error('Failed to retrieve OneSignal User ID');
         }
       });
-    });
-    OneSignal.getUserId().then((userId) => {
-      // Store the userId in your database along with their scheduling information
-      console.log('OneSignal User ID:', userId);
-      localStorage.setItem('onesignal-userId', userId);
-    });
+    }, 5000); // 5 seconds should be enough time for the user to respond
   };
 
   useEffect(() => {
