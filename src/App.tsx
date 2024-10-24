@@ -37,6 +37,11 @@ function Layout() {
         }
       });
     });
+    OneSignal.getUserId().then((userId) => {
+      // Store the userId in your database along with their scheduling information
+      console.log('OneSignal User ID:', userId);
+      localStorage.setItem('onesignal-userId', userId);
+    });
   };
 
   useEffect(() => {

@@ -615,26 +615,32 @@ const setProgressUpdateReminderTime = (newTime: progressUpdateReminderTimeProps)
 
 //Schedule notifications
 export const scheduleNotification = async (habit: Habit) => {
-    const time = combineDateAndTimeToUTC(habit.currentScheduledDate, habit.time);
-    console.log(time)
-    const response = await fetch('https://onesignal.com/api/v1/notifications', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: import.meta.env.VITE_REST_API_KEY,
-        },
-        body: JSON.stringify({
-            app_id: import.meta.env.VITE_APP_ID,
-            included_segments: ['Subscribed Users'], // send to all subscribed users
-            contents: { en: `This is your scheduled reminder for "${habit?.habitName}".` },
-            send_after: time, // Schedule the notification (format: 'YYYY-MM-DD HH:mm:ss')
-            small_icon: "https://i.ibb.co/x10PFW8/habito-small.png",
-            data: { habitId: habit?.id },
-        }),
-    });
+    try {
+        const time = combineDateAndTimeToUTC(habit.currentScheduledDate, habit.time);
+        console.log(time , "combined time")
+        const userId = localStorage.getItem("onesignal-userId");
+        console.log(userId, "one signal userId")
+        const response = await fetch('https://onesignal.com/api/v1/notifications', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: import.meta.env.VITE_REST_API_KEY,
+            },
+            body: JSON.stringify({
+                app_id: import.meta.env.VITE_APP_ID,
+                include_external_user_ids: [userId],
+                contents: { en: `This is your scheduled reminder for "${habit?.habitName}".` },
+                send_after: time, // Schedule the notification (format: 'YYYY-MM-DD HH:mm:ss')
+                small_icon: "https://i.ibb.co/x10PFW8/habito-small.png",
+                data: { habitId: habit?.id },
+            }),
+        });
+        const result = await response.json();
+        console.log(result, "result");
+    } catch (error) {
+        console.log(error)
+    }
 
-    const result = await response.json();
-    console.log(result);
 }
 
 function combineDateAndTimeToUTC(
