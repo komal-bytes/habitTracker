@@ -9,6 +9,8 @@ import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from "react";
 import { createTrackLogs, updateScheduledDates } from "./utils/habitFunctions";
 import Progress from "./pages/Progress";
+import OneSignal from 'react-onesignal';
+const appId = import.meta.env.VITE_APP_ID;
 
 function Layout() {
 
@@ -22,30 +24,24 @@ function Layout() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   const registerServiceWorker = async () => {
-  //     if ('serviceWorker' in navigator) {
-  //       // Get all existing service worker registrations
-  //       const registrations = await navigator.serviceWorker.getRegistrations();
-  //       const isServiceWorkerRegistered = registrations.some(reg => reg.active?.scriptURL.includes('/service-worker.js'));
+  const initOneSignal = async () => {
+    await OneSignal.init({
+      appId: appId,
+      allowLocalhostAsSecureOrigin: true, // for local development
+    });
+    // OneSignal.showSlidedownPrompt(); // Prompts the user to allow notifications
+    OneSignal.push(() => {
+      OneSignal.isPushNotificationsEnabled((isEnabled) => {
+        if (!isEnabled) {
+          OneSignal.showSlidedownPrompt();
+        }
+      });
+    });
+  };
 
-  //       // Register the service worker only if it is not already registered
-  //       if (!isServiceWorkerRegistered) {
-  //         navigator.serviceWorker.register('/service-worker.js')
-  //           .then(reg => {
-  //             console.log('Service Worker Registered!', reg);
-  //           })
-  //           .catch(error => {
-  //             console.error('Service Worker registration failed:', error);
-  //           });
-  //       } else {
-  //         console.log('Service Worker is already registered.');
-  //       }
-  //     }
-  //   };
-
-  //   registerServiceWorker();
-  // }, []);
+  useEffect(() => {
+    initOneSignal();
+  }, []);
 
   useEffect(() => {
     (async () => {

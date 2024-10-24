@@ -9,6 +9,7 @@ export async function addHabit(habit: Habit): Promise<number> {
         const id = await db.habits.add(habit);
         console.log(`Habit added with id: ${id}`);
         await createTrackLogs(habit);
+        await scheduleNotification(habit);
         return id;
     } catch (error) {
         console.error("Failed to add habit:", error);
@@ -612,43 +613,47 @@ const setProgressUpdateReminderTime = (newTime: progressUpdateReminderTimeProps)
     }
 };
 
+//Schedule notifications
+export const scheduleNotification = async (habit: Habit) => {
+    const time = combineDateAndTimeToUTC(habit.currentScheduledDate, habit.time);
+    console.log(time)
+    const response = await fetch('https://onesignal.com/api/v1/notifications', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: import.meta.env.VITE_REST_API_KEY,
+        },
+        body: JSON.stringify({
+            app_id: import.meta.env.VITE_APP_ID,
+            included_segments: ['Subscribed Users'], // send to all subscribed users
+            contents: { en: `This is your scheduled reminder for "${habit?.habitName}".` },
+            send_after: time, // Schedule the notification (format: 'YYYY-MM-DD HH:mm:ss')
+            small_icon: "https://ibb.co/Mc4WBr5",
+            data: { habitId: habit?.id },
+        }),
+    });
 
-// Trigger reminders
-export const triggerNotification = () => {
-
-    console.log(Notification.permission)
-    if (Notification.permission === "granted") {
-        new Notification("jfo")
-        // navigator.serviceWorker.ready.then(registration => {
-        //     console.log("entered")
-        //     // registration.showNotification('Reminder!', {
-        //     //     body: 'Update your progress and maintain your streak',
-        //     //     action: [{ action: 'update', title: 'Update' }],
-        //     //     data: { url: '/settings#progressUpdate' },
-        //     //     sound: '/sounds/sound1.mp3',
-        //     // });
-
-        //     // registration.active.postMessage(
-        //     //     "Test message sent immediately after creation",
-        //     // );
-
-        //     // const audio = new Audio('/sounds/sound1.mp3');
-        //     // audio.loop = true; // Loop the sound
-        //     // audio.play();
-
-        //     // Stop sound when user clicks on notification or updates
-        //     registration.getNotifications().then(notifications => {
-        //         notifications.forEach(notification => {
-        //             notification.addEventListener('click', () => {
-        //                 audio.pause(); // Stop sound when clicked
-        //             });
-        //         });
-        //     });
-        // });
-    }
+    const result = await response.json();
+    console.log(result);
 }
 
-// triggerNotification()
+function combineDateAndTimeToUTC(
+    currentScheduledDate: Date,
+    time: { hour: string | number; minute: string | number; second: string | number }
+): string {
+    const date = new Date(currentScheduledDate);
+
+    date.setUTCHours(Number(time.hour), Number(time.minute), Number(time.second), 0);
+
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 
 interface TimeObject {
     hour: number;
