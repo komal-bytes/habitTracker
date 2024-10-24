@@ -75,5 +75,8 @@ export default defineConfig({
   ],
   server: {
     https: true, // Enable HTTPS
+    headers: {
+      "Service-Worker-Allowed": "/",
+    },
   },
 });

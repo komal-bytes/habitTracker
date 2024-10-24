@@ -14,15 +14,15 @@ const appId = import.meta.env.VITE_APP_ID;
 
 function Layout() {
 
-  useEffect(() => {
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          console.log("Notification permission granted.");
-        }
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   if ("Notification" in window && Notification.permission !== "granted") {
+  //     Notification.requestPermission().then(permission => {
+  //       if (permission === "granted") {
+  //         console.log("Notification permission granted.");
+  //       }
+  //     });
+  //   }
+  // }, []);
 
   const initOneSignal = async () => {
     await OneSignal.init({
@@ -30,22 +30,22 @@ function Layout() {
       allowLocalhostAsSecureOrigin: true, // for local development
     });
 
-    const isEnabled = await OneSignal.isPushNotificationsEnabled();
-    if (!isEnabled) {
-      OneSignal.showSlidedownPrompt(); // Prompts the user to allow notifications
-    }
+    // const isEnabled = await OneSignal.isPushNotificationsEnabled();
+    // if (!isEnabled) {
+    //   OneSignal.showSlidedownPrompt(); // Prompts the user to allow notifications
+    // }
 
-    // Use a timeout or callback to ensure the user has had time to respond
-    setTimeout(() => {
-      OneSignal.getUserId().then((userId) => {
-        console.log('OneSignal User ID:', userId);
-        if (userId) {
-          localStorage.setItem('onesignal-userId', userId);
-        } else {
-          console.error('Failed to retrieve OneSignal User ID');
-        }
-      });
-    }, 5000); // 5 seconds should be enough time for the user to respond
+    // // Use a timeout or callback to ensure the user has had time to respond
+    // setTimeout(() => {
+    //   OneSignal.getUserId().then((userId) => {
+    //     console.log('OneSignal User ID:', userId);
+    //     if (userId) {
+    //       localStorage.setItem('onesignal-userId', userId);
+    //     } else {
+    //       console.error('Failed to retrieve OneSignal User ID');
+    //     }
+    //   });
+    // }, 2000); // 5 seconds should be enough time for the user to respond
   };
 
   useEffect(() => {
