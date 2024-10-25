@@ -155,6 +155,7 @@ export const updateScheduledDates = async () => {
         for (const habit of habits) {
 
             const currentScheduledDate = new Date(habit.currentScheduledDate).toISOString().split('T')[0];
+            console.log(currentDate, currentScheduledDate, "current two dates")
             if (currentScheduledDate < currentDate) {
                 let lastScheduledFor;
                 let currentlyScheduledFor;

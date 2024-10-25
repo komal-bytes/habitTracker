@@ -81,8 +81,8 @@ interface Habit {
     frequencyValue: number;
 }
 
-export function calculateNextScheduledDate(type: string, habit: Habit, currentDate: string): { lastScheduledFor: Date; currentlyScheduledFor: Date; nextScheduledFor: Date } {
-    const current = new Date(currentDate);
+export function calculateNextScheduledDate(type: string, habit: Habit, currentScheduleDate: string): { lastScheduledFor: Date; currentlyScheduledFor: Date; nextScheduledFor: Date } {
+    const current = new Date(); //new Date(currentDate)
     const currentDay = current.getDay();
     let lastScheduledFor: Date;
     let currentlyScheduledFor: Date;
@@ -98,16 +98,17 @@ export function calculateNextScheduledDate(type: string, habit: Habit, currentDa
         const daysArray = habit.specificFrequencyDays.sort((a, b) => a - b);
         const todayIndex = daysArray.indexOf(currentDay);
 
-        lastScheduledFor = todayIndex !== -1 ? new Date(current) : new Date(current);
-        lastScheduledFor.setDate(current.getDate() - (todayIndex === -1 ? 1 : 0));
+        // lastScheduledFor = todayIndex !== -1 ? new Date(current) : new Date(current);
+        // lastScheduledFor.setDate(current.getDate() - (todayIndex === -1 ? 1 : 0));
+        lastScheduledFor = new Date(currentScheduleDate);
 
         currentlyScheduledFor = daysArray.find(day => day >= currentDay) !== undefined
             ? new Date(current).setDate(current.getDate() + (daysArray.find(day => day >= currentDay)! - currentDay))
-            : new Date(current).setDate(current.getDate() + (daysArray[0] - currentDay));
+            : new Date(current).setDate(current.getDate() + ((daysArray[0] + 7) - currentDay));
 
         nextScheduledFor = daysArray.find(day => day > currentlyScheduledFor.getDay()) !== undefined
-            ? new Date(current).setDate(current.getDate() + (daysArray.find(day => day > currentlyScheduledFor.getDay())! - currentDay))
-            : new Date(current).setDate(current.getDate() + (daysArray[0] - currentDay));
+            ? new Date(current).setDate(current.getDate() + (daysArray.find(day => day > new Date(currentlyScheduledFor).getDay())! - currentDay))
+            : new Date(current).setDate(current.getDate() + ((daysArray[0] + 7) - currentDay));
     } else if (type === 'Custom') {
         currentlyScheduledFor = new Date(habit.currentScheduledDate);
         while (currentlyScheduledFor < current) {
