@@ -33,8 +33,39 @@ const Progress = () => {
         }
     }
 
-    // console.log(habitsList)
-    console.log(selectedHabit, "selected")
+    const handleShareOnWhatsApp = async () => {
+        if (navigator.canShare && progressRef.current) {
+            try {
+                // Capture screenshot as a data URL
+                const dataUrl = await toPng(progressRef.current, { backgroundColor: '#ffffff' });
+
+                // Convert data URL to blob
+                const response = await fetch(dataUrl);
+                let blob = await response.blob();
+                let file = new File([blob], 'progress.png', { type: 'image/png' });
+
+                // Share using Web Share API
+                if (navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'My Progress',
+                        text: 'Check out my progress!',
+                        files: [file]
+                    });
+                } else {
+                    console.error("Sharing files is not supported on this device.");
+                }
+
+                // Set references to null for garbage collection
+                blob = null;
+                file = null;
+
+            } catch (error) {
+                console.error('Error sharing the image:', error);
+            }
+        } else {
+            console.error("Web Share API or file sharing is not supported on this browser.");
+        }
+    };
 
     return (
         <div className="h-auto p-2">
@@ -116,7 +147,7 @@ const Progress = () => {
                         <Tab key="Calender View" title="Calender View" className='relative'>
                             <Calendar habitLog={habitLog} />
                         </Tab>
-                        <Tab key="Graph View" title="Graph View">
+                        <Tab key="Graph View" title="Graph View" className='relative'>
                             <Graph selectedHabit={selectedHabit} />
                         </Tab>
                     </Tabs>

@@ -2,6 +2,7 @@ import db, { TrackLog } from '@/config/db';
 import { Habit, Log } from '@/config/db';
 import { calculateCurrentAndNextScheduledDate, calculateNextScheduledDate, calculateNextScheduledDateForCustom } from './schedulingFunctions';
 import * as chrono from 'chrono-node';
+import { toPng } from 'html-to-image';
 
 // Function to add a new habit
 export async function addHabit(habit: Habit): Promise<number> {
@@ -656,3 +657,38 @@ export function parseFrequency(input: string) {
 
     return { value, type, startDay };
 }
+
+
+export const handleShareOnWhatsApp = async (progressRef: React.RefObject<HTMLElement>) => {
+    if (navigator.canShare && progressRef.current) {
+        try {
+            // Capture screenshot as a data URL
+            const dataUrl = await toPng(progressRef.current, { backgroundColor: '#ffffff' });
+
+            // Convert data URL to blob
+            const response = await fetch(dataUrl);
+            let blob = await response.blob();
+            let file = new File([blob], 'progress.png', { type: 'image/png' });
+
+            // Share using Web Share API
+            if (navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    title: 'My Progress',
+                    text: 'Check out my progress!',
+                    files: [file]
+                });
+            } else {
+                console.error("Sharing files is not supported on this device.");
+            }
+
+            // Set references to null for garbage collection
+            blob = null;
+            file = null;
+
+        } catch (error) {
+            console.error('Error sharing the image:', error);
+        }
+    } else {
+        console.error("Web Share API or file sharing is not supported on this browser.");
+    }
+};

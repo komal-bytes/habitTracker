@@ -6,7 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { Log } from "@/config/db";
 import { CircularProgress, Tooltip } from '@nextui-org/react';
 import { toPng } from 'html-to-image';
-import WhatsAppButton from './WhatsAppButton';
+import WhatsAppButton from '@/components/Progress/WhatsAppButton';
 
 dayjs.extend(advancedFormat);
 dayjs.extend(relativeTime);
@@ -23,39 +23,6 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
     const [showTooltip, setShowTooltip] = useState("");
     const currentDate = dayjs().format('YYYY-MM-DD');
 
-    const handleShareOnWhatsApp = async () => {
-        if (navigator.canShare && progressRef.current) {
-            try {
-                // Capture screenshot as a data URL
-                const dataUrl = await toPng(progressRef.current, { backgroundColor: '#ffffff' });
-
-                // Convert data URL to blob
-                const response = await fetch(dataUrl);
-                let blob = await response.blob();
-                let file = new File([blob], 'progress.png', { type: 'image/png' });
-
-                // Share using Web Share API
-                if (navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        title: 'My Progress',
-                        text: 'Check out my progress!',
-                        files: [file]
-                    });
-                } else {
-                    console.error("Sharing files is not supported on this device.");
-                }
-
-                // Set references to null for garbage collection
-                blob = null;
-                file = null;
-
-            } catch (error) {
-                console.error('Error sharing the image:', error);
-            }
-        } else {
-            console.error("Web Share API or file sharing is not supported on this browser.");
-        }
-    };
 
     // Get days in the selected month and year
     const daysInMonth = dayjs(`${selectedYear}-${selectedMonth + 1}`).daysInMonth();
@@ -84,7 +51,7 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
 
             // Check if the current date should be highlighted
             const isToday = dateString === currentDate;
-            console.log(log?.notes)
+            // console.log(log?.notes)
             days.push(
                 <Tooltip
                     showArrow
@@ -172,7 +139,7 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
                 </div>
 
             </div>
-            <WhatsAppButton share={handleShareOnWhatsApp} />
+            <WhatsAppButton ref={progressRef} />
         </>
     );
 };

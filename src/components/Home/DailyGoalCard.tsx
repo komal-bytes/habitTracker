@@ -27,6 +27,24 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({ logs }) => {
         setGoalProgress(((countValue / (tasksCount * 100)) * 100).toFixed(2));
     }, [logs])
 
+    function getDailyGoalStatus(goalProgress: number): string {
+        if (goalProgress === 100) {
+            return "Proud of You. You did it!"
+        } else if (goalProgress >= 70 && goalProgress < 100) {
+            return "Daily goal almost done!";
+        } else if (goalProgress >= 50 && goalProgress < 70) {
+            return "You're making good progress on your daily goal!";
+        } else if (goalProgress >= 30 && goalProgress < 50) {
+            return "Keep going! You're getting there!";
+        } else if (goalProgress >= 10 && goalProgress < 30) {
+            return "A good start! Let's pick up the pace!";
+        } else if (goalProgress > 0 && goalProgress < 10) {
+            return `It's a new day! Time to begin your daily goal! `;
+        } else {
+            return "No progress yet. Let's get started!";
+        }
+    }
+
     return (
         <div className="w-full my-12 relative max-w-sm p-4 rounded-2xl shadow-lg flex justify-end flex items-center bg-custom-gradient">
             {/* Avatar */}
@@ -42,7 +60,7 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({ logs }) => {
             {/* Goal Progress */}
             <div className="flex flex-col w-2/3">
                 <h3 className="text-white font-semibold text-sm">
-                    Your Daily Goal Almost Done
+                    {getDailyGoalStatus(goalProgress)}
                 </h3>
                 <p className="text-white text-xs">{completedTasks} of {totalTasks} completed</p>
 
@@ -63,7 +81,7 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({ logs }) => {
 
                 {/* Percentage */}
                 {
-                     isNaN(goalProgress) === false
+                    isNaN(goalProgress) === false
                     &&
                     <p className="text-white text-right text-sm mt-1">{goalProgress}%</p>
                 }
