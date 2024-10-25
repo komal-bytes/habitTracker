@@ -34,10 +34,7 @@ export default defineConfig({
     react(),
     tsconfigPaths(),
     basicSsl({
-      // Optional: Customize your SSL configuration
       name: 'habito', // Name of the certificate
-      // domains: ['*.custom.com'], // Custom trust domains (optional)
-      // certDir: '/path/to/cert/directory', // Custom certification directory (optional)
     }),
     VitePWA({
       registerType: 'autoUpdate',
@@ -61,14 +58,8 @@ export default defineConfig({
           }
         ]
       },
-      // injectRegister: false,
-      // HERE! For custom service worker
-      // srcDir: path.resolve(__dirname, 'src/utils/'),
-      // filename: 'service-worker.js',
-      // strategies: 'injectManifest',
       workbox: {
         cleanupOutdatedCaches: true,
-        // globDirectory: path.resolve(__dirname, 'public'),
         globPatterns: ["/", "*/.{mjs,js,css,html,png,svg,ico,jpeg,json}"],
       },
     })

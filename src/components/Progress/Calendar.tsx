@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en'; // Locale for formatting dates
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Log } from "@/config/db";
 import { CircularProgress, Tooltip } from '@nextui-org/react';
+import { toPng } from 'html-to-image';
+import WhatsAppButton from './WhatsAppButton';
 
 dayjs.extend(advancedFormat);
 dayjs.extend(relativeTime);
@@ -15,10 +17,45 @@ interface CalendarProps {
 
 const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
 
+    const progressRef = useRef<HTMLDivElement>(null);
     const [selectedMonth, setSelectedMonth] = useState(dayjs().month()); // 0: January, 11: December
     const [selectedYear, setSelectedYear] = useState(dayjs().year());
     const [showTooltip, setShowTooltip] = useState("");
     const currentDate = dayjs().format('YYYY-MM-DD');
+
+    const handleShareOnWhatsApp = async () => {
+        if (navigator.canShare && progressRef.current) {
+            try {
+                // Capture screenshot as a data URL
+                const dataUrl = await toPng(progressRef.current);
+
+                // Convert data URL to blob
+                const response = await fetch(dataUrl);
+                let blob = await response.blob();
+                let file = new File([blob], 'progress.png', { type: 'image/png' });
+
+                // Share using Web Share API
+                if (navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'My Progress',
+                        text: 'Check out my progress!',
+                        files: [file]
+                    });
+                } else {
+                    console.error("Sharing files is not supported on this device.");
+                }
+
+                // Set references to null for garbage collection
+                blob = null;
+                file = null;
+
+            } catch (error) {
+                console.error('Error sharing the image:', error);
+            }
+        } else {
+            console.error("Web Share API or file sharing is not supported on this browser.");
+        }
+    };
 
     // Get days in the selected month and year
     const daysInMonth = dayjs(`${selectedYear}-${selectedMonth + 1}`).daysInMonth();
@@ -99,7 +136,8 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
     };
 
     return (
-        <div className="flex flex-col items-center w-full m-auto p-4"
+        <div className="flex flex-col items-center w-full m-auto p-4 relative"
+            ref={progressRef}
             onClick={(e) => {
                 e.stopPropagation();
                 setShowTooltip(false)
@@ -131,6 +169,8 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
                 {/* Render Days */}
                 {renderDays()}
             </div>
+
+            <WhatsAppButton share={handleShareOnWhatsApp}/>
         </div>
     );
 };

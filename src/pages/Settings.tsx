@@ -143,7 +143,7 @@ const Settings: React.FC = () => {
                     </div>
 
                     {/* Progress Update Reminder Time */}
-                    <div className="flex items-stretch mt-4 space-x-4">
+                    {/* <div className="flex items-stretch mt-4 space-x-4">
                         {isEditingTime ? (
                             <TimeInput value={reminderTime} onChange={setReminderTime} />
                         ) : (
@@ -160,7 +160,7 @@ const Settings: React.FC = () => {
                         ) : (
                             <FaRegEdit className="cursor-pointer text-xl" onClick={() => setIsEditingTime(true)} />
                         )}
-                    </div>
+                    </div> */}
                 </div>
 
             </div>

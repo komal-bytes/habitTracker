@@ -9,7 +9,7 @@ export async function addHabit(habit: Habit): Promise<number> {
         const id = await db.habits.add(habit);
         console.log(`Habit added with id: ${id}`);
         await createTrackLogs(habit);
-        await scheduleNotification(habit);
+        // await scheduleNotification(habit);
         return id;
     } catch (error) {
         console.error("Failed to add habit:", error);
@@ -63,8 +63,6 @@ export async function updateHabitDetails(habitId: number, updatedHabit: Partial<
         throw error;
     }
 }
-
-// await updateHabitDetails(1, { isPaused: true })
 
 //Function to delete a habit
 export async function deleteHabit(habitId: number): Promise<boolean> {
@@ -147,7 +145,6 @@ export const createLogAndUpdateHabit = async (log: logProps): Promise<void> => {
     }
 };
 
-// await createLogAndUpdateHabit({ habitId: 1, completePercentage: 100, notes: "Completed it." });
 
 export const updateScheduledDates = async () => {
     try {
@@ -155,8 +152,6 @@ export const updateScheduledDates = async () => {
         const habits = await db.habits.toArray();
 
         for (const habit of habits) {
-
-            // if (habit.isPaused) continue;
 
             const currentScheduledDate = new Date(habit.currentScheduledDate).toISOString().split('T')[0];
             if (currentScheduledDate < currentDate) {
@@ -225,7 +220,6 @@ export async function updateLogDetails(logId: number, habitId: number, updatedLo
     }
 }
 
-// await updateLogDetails(1, { notes: "changed notes" })
 
 //Function to update the streak
 export const updateHabitStreak = async (habitId: number) => {
@@ -239,7 +233,6 @@ export const updateHabitStreak = async (habitId: number) => {
         const lastScheduledDate = habit.lastScheduledDate ? new Date(habit.lastScheduledDate).toISOString().split('T')[0] : 0;
         const lastProgressUpdateDate = habit.lastProgressUpdateDate ? new Date(habit.lastProgressUpdateDate).toISOString().split('T')[0] : 0;
         const currentDate = new Date().toISOString().split('T')[0];
-        // console.log(lastProgressUpdateDate, currentDate, "check hereee")
         if (lastProgressUpdateDate !== currentDate) {
             if (lastScheduledDate === lastProgressUpdateDate) {
                 habit.currentStreak += 1;
@@ -287,11 +280,7 @@ export const getLogsByHabitId = async (habitId: number): Promise<Log[]> => {
 
 
         let current = startDate;
-        // console.log(current < currentDate, "logs")
         while (current <= currentDate) {
-            // const dateString = current; // Format date as YYYY-MM-DD
-            // console.log(dateString, "logs")
-            // console.log(current)
             const logForDate = logs.find(log => new Date(log.completionDate).toISOString().split('T')[0] === current) || null;
 
 
@@ -311,14 +300,6 @@ export const getLogsByHabitId = async (habitId: number): Promise<Log[]> => {
     }
 };
 
-// getLogsByHabitId(1)
-//     .then(logs => {
-//         console.log("Logs for Habit ID 1:", logs);
-//     })
-//     .catch(error => {
-//         console.error("Failed to fetch logs:", error);
-//     });
-
 
 export const createTrackLogs = async (habitObject?: Habit) => {
 
@@ -336,7 +317,7 @@ export const createTrackLogs = async (habitObject?: Habit) => {
             const today = new Date().toISOString().split('T')[0];
             let startDate: Date;
 
-            console.log(latestLog)
+            // console.log(latestLog)
 
             if (latestLog) {
                 startDate = new Date(latestLog.trackingDate);
@@ -345,7 +326,7 @@ export const createTrackLogs = async (habitObject?: Habit) => {
                 startDate = today;
             }
 
-            console.log(startDate, today)
+            // console.log(startDate, today)
 
             if (frequencyType === 'Daily') {
                 while (startDate <= today) {
@@ -531,54 +512,6 @@ export const queryLogs = async (type: 'Daily' | 'Weekly' | 'Monthly', habitId: s
 };
 
 
-// Function to resume a habit
-// const resumeHabit = async (habitId: number): Promise<void> => {
-//     try {
-
-//         const habit = await db.habits.get(habitId);
-//         if (!habit) {
-//             throw new Error("Habit not found");
-//         }
-
-//         habit.isPaused = false;
-
-//         //Don't need all of this because we are gonna update the scheduled dates of the habit everytime whether its paused or not
-//         // Get the current date to use as lastScheduledDate
-//         // const lastScheduledDate = new Date().toISOString();
-
-//         // let currentlyScheduledFor;
-//         // let nextScheduledFor;
-
-//         // if (habit.frequencyType === 'Custom') {
-//         //     const dates = calculateNextScheduledDateForCustom({ type: habit.customFrequencyType, value: habit.frequencyValue }, lastScheduledDate);
-//         //     currentlyScheduledFor = dates.currentlyScheduledFor;
-//         //     nextScheduledFor = dates.nextScheduledFor;
-//         // } else {
-//         //     const dates = calculateCurrentAndNextScheduledDate(habit.frequencyType, habit);
-//         //     currentlyScheduledFor = dates.currentlyScheduledFor;
-//         //     nextScheduledFor = dates.nextScheduledFor;
-//         // }
-
-//         await db.habits.update(habitId, {
-//             isPaused: false,
-//         });
-
-//         console.log("Habit resumed successfully:", habitId);
-//     } catch (error) {
-//         console.error("Error resuming habit:", error);
-//         throw error;
-//     }
-// };
-
-// resumeHabit(1)
-//     .then(() => {
-//         console.log("Habit resumed.");
-//     })
-//     .catch(error => {
-//         console.error("Failed to resume habit:", error);
-//     });
-
-
 interface progressUpdateReminderTimeProps {
     hours: number,
     minutes: number,
@@ -617,9 +550,8 @@ const setProgressUpdateReminderTime = (newTime: progressUpdateReminderTimeProps)
 export const scheduleNotification = async (habit: Habit) => {
     try {
         const time = combineDateAndTimeToUTC(habit.currentScheduledDate, habit.time);
-        console.log(time , "combined time")
+        // console.log(time , "combined time")
         const userId = localStorage.getItem("onesignal-userId");
-        console.log(userId, "one signal userId")
         const response = await fetch('https://onesignal.com/api/v1/notifications', {
             method: 'POST',
             headers: {

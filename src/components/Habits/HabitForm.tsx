@@ -65,7 +65,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
         specificFrequencyDays: [],
         customFrequency: "",
         customStartDay: "",
-        isReminderRequired: false,
+        // isReminderRequired: false,
         iconType: "",
         currentStreak: 0,
         bestStreak: 0,
@@ -109,7 +109,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
         currentScheduledDate: "",
         nextScheduledDate: "",
         frequencyValue: "",
-        isReminderRequired: ""
+        // isReminderRequired: ""
     })
     const [loader, setLoader] = useState("");
 
@@ -136,9 +136,6 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
 
 
     const updateHabit = (e: any) => {
-
-        console.log((e.target.value))
-
         setHabit((prev) => {
             return {
                 ...prev,
@@ -171,7 +168,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
         onLoaderOpen();
         setLoader("loading");
         const updatedHabitObj = formatForm();
-        console.log(updatedHabitObj, 'hereee')
+        // console.log(updatedHabitObj, 'hereee')
         setTimeout(async () => {
             try {
                 await addHabit(updatedHabitObj);
@@ -191,7 +188,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
         onLoaderOpen();
         setLoader("loading");
         const updatedHabitObj = formatForm();
-        console.log(updatedHabitObj, 'hereee')
+        // console.log(updatedHabitObj, 'hereee')
         setTimeout(async () => {
             try {
                 await updateHabitDetails(updatedHabitObj?.id, updatedHabitObj);
@@ -214,7 +211,6 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
             specificFrequencyDays: [],
             customFrequency: "",
             customStartDay: "",
-            isReminderRequired: false,
             iconType: "",
             currentStreak: 0,
             bestStreak: 0,
@@ -267,7 +263,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
             else setFrequencyFormatError("");
         }
 
-        console.log(errorFlag)
+        // console.log(errorFlag)
 
         setErrors(updateErrorObj);
         return !errorFlag
@@ -513,7 +509,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
                             errorMessage={errors.time}
                         />
 
-                        <Switch size="sm"
+                        {/* <Switch size="sm"
                             classNames={{
                                 wrapper: cn(
                                     "group-data-[selected=true]:bg-button-gradient"
@@ -529,13 +525,9 @@ const HabitForm: React.FC<HabitFormProps> = ({ isOpen, onClose, onOpenChange, se
                                     }
                                 })
                             }}
-                        // isInvalid={errors.isReminderRequired ? true : false}
-                        // color={errors.isReminderRequired ? "danger" : "default"}
-                        // errorMessage={errors.isReminderRequired}
-
                         >
                             Want Reminder For Habit?
-                        </Switch>
+                        </Switch> */}
 
                         <div>
                             <p className="text-semibold">Choose Icon<span className="text-danger">*</span></p>
