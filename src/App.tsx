@@ -12,45 +12,7 @@ import Progress from "./pages/Progress";
 import OneSignal from 'react-onesignal';
 const appId = import.meta.env.VITE_APP_ID;
 
-function Layout() {
-
-  // useEffect(() => {
-  //   if ("Notification" in window && Notification.permission !== "granted") {
-  //     Notification.requestPermission().then(permission => {
-  //       if (permission === "granted") {
-  //         console.log("Notification permission granted.");
-  //       }
-  //     });
-  //   }
-  // }, []);
-
-  const initOneSignal = async () => {
-    await OneSignal.init({
-      appId: appId,
-      allowLocalhostAsSecureOrigin: true, // for local development
-    });
-
-    // const isEnabled = await OneSignal.isPushNotificationsEnabled();
-    // if (!isEnabled) {
-    //   OneSignal.showSlidedownPrompt(); // Prompts the user to allow notifications
-    // }
-
-    // // Use a timeout or callback to ensure the user has had time to respond
-    // setTimeout(() => {
-    //   OneSignal.getUserId().then((userId) => {
-    //     console.log('OneSignal User ID:', userId);
-    //     if (userId) {
-    //       localStorage.setItem('onesignal-userId', userId);
-    //     } else {
-    //       console.error('Failed to retrieve OneSignal User ID');
-    //     }
-    //   });
-    // }, 2000); // 5 seconds should be enough time for the user to respond
-  };
-
-  useEffect(() => {
-    // initOneSignal();
-  }, []);
+function BackgroundProcessing() {
 
   useEffect(() => {
     (async () => {
@@ -59,6 +21,10 @@ function Layout() {
     })();
   }, [])
 
+  return <></>
+}
+
+function Layout() {
 
   const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")))
 
@@ -74,37 +40,39 @@ function App() {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <Home />
-        }
-      />
-      <Route path="" element={<Layout />}>
+      <Route path="" element={<BackgroundProcessing />}>
         <Route
-          path="/daily"
+          path="/"
           element={
-            <Daily />
+            <Home />
           }
         />
-        <Route
-          path="/habits"
-          element={
-            <Habits />
-          }
-        />
-        <Route
-          path="/logs"
-          element={
-            <Progress />
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <Settings />
-          }
-        />
+        <Route path="" element={<Layout />}>
+          <Route
+            path="/daily"
+            element={
+              <Daily />
+            }
+          />
+          <Route
+            path="/habits"
+            element={
+              <Habits />
+            }
+          />
+          <Route
+            path="/logs"
+            element={
+              <Progress />
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <Settings />
+            }
+          />
+        </Route>
       </Route>
     </Routes>
   );
