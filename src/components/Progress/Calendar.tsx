@@ -27,7 +27,7 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
         if (navigator.canShare && progressRef.current) {
             try {
                 // Capture screenshot as a data URL
-                const dataUrl = await toPng(progressRef.current);
+                const dataUrl = await toPng(progressRef.current, { backgroundColor: '#ffffff' });
 
                 // Convert data URL to blob
                 const response = await fetch(dataUrl);
