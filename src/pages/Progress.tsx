@@ -113,7 +113,7 @@ const Progress = () => {
                             tabContent: "group-data-[selected=true]:text-gray-400 text-center"
                         }}
                     >
-                        <Tab key="Calender View" title="Calender View">
+                        <Tab key="Calender View" title="Calender View" className='relative'>
                             <Calendar habitLog={habitLog} />
                         </Tab>
                         <Tab key="Graph View" title="Graph View">

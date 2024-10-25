@@ -136,42 +136,44 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
     };
 
     return (
-        <div className="flex flex-col items-center w-full m-auto p-4 relative"
-            ref={progressRef}
-            onClick={(e) => {
-                e.stopPropagation();
-                setShowTooltip(false)
-            }}
-        >
-            {/* Month and Year Selector */}
-            <div className="flex justify-between items-center w-full mb-4">
-                <button onClick={handlePreviousMonth} className="p-2 bg-orange-500 text-white rounded-full">
-                    &lt;
-                </button>
-                <div className="flex flex-col items-center">
-                    <span className="text-xl font-bold">
-                        {dayjs(`${selectedYear}-${selectedMonth + 1}`).format('MMMM, YYYY')}
-                    </span>
-                </div>
-                <button onClick={handleNextMonth} className="p-2 bg-orange-500 text-white rounded-full">
-                    &gt;
-                </button>
-            </div>
-
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-2 w-full">
-                {/* Weekday Labels */}
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                    <div key={day} className="text-center font-semibold">
-                        {day}
+        <>
+            <div className="flex flex-col items-center w-full m-auto p-4"
+                ref={progressRef}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setShowTooltip(false)
+                }}
+            >
+                {/* Month and Year Selector */}
+                <div className="flex justify-between items-center w-full mb-4">
+                    <button onClick={handlePreviousMonth} className="p-2 bg-orange-500 text-white rounded-full">
+                        &lt;
+                    </button>
+                    <div className="flex flex-col items-center">
+                        <span className="text-xl font-bold">
+                            {dayjs(`${selectedYear}-${selectedMonth + 1}`).format('MMMM, YYYY')}
+                        </span>
                     </div>
-                ))}
-                {/* Render Days */}
-                {renderDays()}
-            </div>
+                    <button onClick={handleNextMonth} className="p-2 bg-orange-500 text-white rounded-full">
+                        &gt;
+                    </button>
+                </div>
 
-            <WhatsAppButton share={handleShareOnWhatsApp}/>
-        </div>
+                {/* Calendar Grid */}
+                <div className="grid grid-cols-7 gap-2 w-full">
+                    {/* Weekday Labels */}
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                        <div key={day} className="text-center font-semibold">
+                            {day}
+                        </div>
+                    ))}
+                    {/* Render Days */}
+                    {renderDays()}
+                </div>
+
+            </div>
+            <WhatsAppButton share={handleShareOnWhatsApp} />
+        </>
     );
 };
 
