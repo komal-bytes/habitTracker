@@ -21,7 +21,9 @@ function BackgroundProcessing() {
     })();
   }, [])
 
-  return <></>
+  return <>
+    <Outlet />
+  </>
 }
 
 function Layout() {
