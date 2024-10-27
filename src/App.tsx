@@ -47,32 +47,32 @@ function App() {
             <Home />
           }
         />
-        <Route path="" element={<Layout />}>
-          <Route
-            path="/daily"
-            element={
-              <Daily />
-            }
-          />
-          <Route
-            path="/habits"
-            element={
-              <Habits />
-            }
-          />
-          <Route
-            path="/logs"
-            element={
-              <Progress />
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <Settings />
-            }
-          />
-        </Route>
+      </Route>
+      <Route path="" element={<Layout />}>
+        <Route
+          path="/daily"
+          element={
+            <Daily />
+          }
+        />
+        <Route
+          path="/habits"
+          element={
+            <Habits />
+          }
+        />
+        <Route
+          path="/logs"
+          element={
+            <Progress />
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <Settings />
+          }
+        />
       </Route>
     </Routes>
   );
