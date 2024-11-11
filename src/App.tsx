@@ -9,21 +9,67 @@ import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from "react";
 import { createTrackLogs, updateScheduledDates } from "./utils/habitFunctions";
 import Progress from "./pages/Progress";
-import OneSignal from 'react-onesignal';
-const appId = import.meta.env.VITE_APP_ID;
 
 function BackgroundProcessing() {
 
   useEffect(() => {
+
+    scheduleDailyTask();
+
     (async () => {
       await updateScheduledDates();
       await createTrackLogs();
     })();
   }, [])
 
+  // Keep track of the current page
+  const mainPagePath = '/'; // Replace with your main page path
+
+  // Intercept the back button
+  window.addEventListener('popstate', () => {
+    if (window.location.pathname === mainPagePath) {
+      // If on the main page, try to close the app
+      if (confirm("Do you want to exit the app?")) {
+        window.close(); // This may work in some Android PWAs, or use TWA for guaranteed exit
+      } else {
+        // If window.close() does not work, keep user on main page
+        history.pushState(null, null, mainPagePath);
+      }
+    } else {
+      // If on a different page, navigate back to the main page
+      history.pushState(null, null, mainPagePath);
+    }
+  });
+
+  // Initialize with the main page state
+  history.pushState(null, null, window.location.pathname);
+
   return <>
     <Outlet />
   </>
+}
+
+
+function scheduleDailyTask() {
+
+  let hasRunToday = false;
+
+  setInterval(async () => {
+    const now = new Date();
+    const isMidnight = now.getHours() === 0;
+
+    console.log("fomr here", isMidnight, hasRunToday)
+    if (isMidnight && !hasRunToday) {
+      console.log("fomr here also")
+      await updateScheduledDates();
+      await createTrackLogs();
+      hasRunToday = true;
+    }
+
+    if (now.getHours() === 1 && hasRunToday) {
+      hasRunToday = false;
+    }
+  }, 60000);
 }
 
 function Layout() {
