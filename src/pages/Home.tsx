@@ -9,7 +9,7 @@ const Home: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between w-full p-5">
                 <div className="flex items-center">
-                    <h1 className="text-3xl font-bold select-none">
+                    <h1 className="text-3xl font-bold select-none text-black">
                         Habit<span className="text-primary">o</span>
                     </h1>
                 </div>
@@ -23,7 +23,7 @@ const Home: React.FC = () => {
                     play
                     style={{ width: 250, height: 250 }}
                 />
-                <h2 className="w-[80%] text-[35px] font-semibold text-center">
+                <h2 className="w-[80%] text-[35px] font-semibold text-center text-black">
                     Balance your life today
                 </h2>
             </div>

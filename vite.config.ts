@@ -38,6 +38,7 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['index.html', 'habito-small.png', 'habito-large.png'],
       manifest: {
         name: 'Habito',
         short_name: 'Habito',

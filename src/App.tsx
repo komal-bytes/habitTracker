@@ -22,26 +22,14 @@ function BackgroundProcessing() {
     })();
   }, [])
 
-  // Keep track of the current page
-  const mainPagePath = '/'; // Replace with your main page path
+  const mainPagePath = '/';
 
-  // Intercept the back button
   window.addEventListener('popstate', () => {
-    if (window.location.pathname === mainPagePath) {
-      // If on the main page, try to close the app
-      if (confirm("Do you want to exit the app?")) {
-        window.close(); // This may work in some Android PWAs, or use TWA for guaranteed exit
-      } else {
-        // If window.close() does not work, keep user on main page
-        history.pushState(null, null, mainPagePath);
-      }
-    } else {
-      // If on a different page, navigate back to the main page
+    if (window.location.pathname != mainPagePath) {
       history.pushState(null, null, mainPagePath);
     }
   });
 
-  // Initialize with the main page state
   history.pushState(null, null, window.location.pathname);
 
   return <>
