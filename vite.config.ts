@@ -38,7 +38,7 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['index.html', 'habito-small.png', 'habito-large.png'],
+      includeAssets: ['index.html', 'habito-small.png', 'habito-large.png', 'icons/*.png', 'robots.txt'],
       manifest: {
         name: 'Habito',
         short_name: 'Habito',
@@ -61,7 +61,8 @@ export default defineConfig({
       },
       workbox: {
         cleanupOutdatedCaches: true,
-        globPatterns: ["/", "*/.{mjs,js,ts,css,html,png,svg,ico,jpeg,jpg,json}"],
+        globPatterns: ["**/*.{mjs,js,ts,css,html,png,svg,ico,jpeg,jpg,json}"],
+        navigateFallback: '/index.html',
         runtimeCaching: [
           {
             urlPattern: ({ request }) =>
