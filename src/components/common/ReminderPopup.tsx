@@ -6,7 +6,6 @@ interface ReminderPopupProps {
 }
 
 const ReminderPopup: React.FC<ReminderPopupProps> = ({ isVisible, onClose }) => {
-    console.log(isVisible);
 
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const soundBuffer = useRef<AudioBuffer | null>(null);

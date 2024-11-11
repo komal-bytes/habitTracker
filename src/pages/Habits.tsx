@@ -41,7 +41,6 @@ const Habits: React.FC = () => {
         });
     }
 
-    console.log(habitsData)
 
     return (
         <div className="h-full w-full flex-column items-center justify-start"

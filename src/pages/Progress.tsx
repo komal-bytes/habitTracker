@@ -18,7 +18,6 @@ const Progress = () => {
             habits.forEach((habit, index) => {
                 habit.key = index + 1;
             })
-            console.log(habits)
             setHabitsList(habits);
         })()
     }, [])
@@ -26,7 +25,6 @@ const Progress = () => {
     const getLogsForSelectedHabit = async (habitId: number) => {
         try {
             let logs = await getLogsByHabitId(habitId);
-            console.log(logs)
             setHabitLog(logs);
         } catch (err) {
 
@@ -81,7 +79,6 @@ const Progress = () => {
                     // selectedKeys={[selectedHabit?.key]}
                     value={selectedHabit?.key}
                     onChange={(e) => {
-                        console.log(e)
                         const habit = habitsList.find((habit) => habit?.id == e.target.value);
                         setSelectedHabit(habit || null);
                         getLogsForSelectedHabit(habit?.id)

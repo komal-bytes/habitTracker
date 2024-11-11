@@ -38,6 +38,7 @@ export interface TrackLog {
     trackingDate: string;
 }
 
+
 class HabitTrackerDB extends Dexie {
     habits!: Dexie.Table<Habit, number>; // Table for Habit entries
     logs!: Dexie.Table<Log, number>;     // Table for Log entries

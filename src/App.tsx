@@ -46,9 +46,7 @@ function scheduleDailyTask() {
     const now = new Date();
     const isMidnight = now.getHours() === 0;
 
-    console.log("fomr here", isMidnight, hasRunToday)
     if (isMidnight && !hasRunToday) {
-      console.log("fomr here also")
       await updateScheduledDates();
       await createTrackLogs();
       hasRunToday = true;

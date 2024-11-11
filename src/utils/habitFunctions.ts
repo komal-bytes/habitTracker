@@ -693,3 +693,10 @@ export const handleShareOnWhatsApp = async (progressRef: React.RefObject<HTMLEle
         console.error("Web Share API or file sharing is not supported on this browser.");
     }
 };
+
+
+export function isBase64Image(str: string) {
+    // Regular expression to check for a base64 image prefix
+    const base64ImagePattern = /^data:image\/(png|jpeg|jpg|gif|webp);base64,/;
+    return base64ImagePattern.test(str);
+}

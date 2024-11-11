@@ -1,11 +1,7 @@
 import { Habit } from '@/config/db';
-import { getAllHabits } from '@/utils/habitFunctions';
-import React, { useEffect, useState } from 'react'
-import { Accordion, AccordionItem, AccordionHeader, AccordionBody } from '@nextui-org/react';
-import Lottie from 'react-lottie-player';
-import done from '@/utils/animations/done.json'
+import React, { useState } from 'react'
+import { Accordion, AccordionItem } from '@nextui-org/react';
 import { FaLock } from "react-icons/fa";
-import { ImUnlocked } from "react-icons/im";
 
 interface HabitListProps {
     habits: Habit[]; // Array of Habit objects
@@ -15,25 +11,13 @@ const HabitList: React.FC<HabitListProps> = ({ habits }) => {
 
     const [selectedKeys, setSelectedKeys] = useState([]);
 
-    console.log(habits)
 
     const handleToggle = (key: string) => {
-        // setSelectedKeys((prev) => {
-        //     const newKeys = new Set(prev);
-        //     if (newKeys.has(key)) {
-        //         newKeys.delete(key); // Collapse if already expanded
-        //     } else {
-        //         newKeys.add(key); // Expand if not
-        //     }
-        //     return newKeys;
-        // });
-        console.log(key, "heyyyy");
         setSelectedKeys((prev: any) =>
             prev.includes(key) ? prev.filter((item: any) => item !== key) : [...prev, key]
         );
     };
 
-    console.log(selectedKeys)
 
     return (
         <Accordion

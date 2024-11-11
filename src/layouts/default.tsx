@@ -6,6 +6,7 @@ import { Avatar, Image } from "@nextui-org/react";
 import { userIcon, userIcons } from "@/utils/icons";
 import { useLocation } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { isBase64Image } from "@/utils/habitFunctions";
 
 interface DefaultLayoutProps {
   children: React.ReactNode;
@@ -40,7 +41,7 @@ export default function DefaultLayout({ children, userInfo }: DefaultLayoutProps
     <div className="relative flex flex-col h-screen">
 
       <div className={`flex p-2 flex items-center ${theme === "light" ? "bg-white" : "bg-black"}`}>
-        <Image src={userIcons[userInfo?.avatar] || userIcons.user} className={`m-2 w-[45px] h-[45px] `} />
+        <Image src={isBase64Image(userInfo?.avatar) ? userInfo?.avatar : userIcons[userInfo?.avatar] || userIcons.user} className={`m-2 w-[45px] h-[45px] object-contain border-1 border-neutral-300 rounded-full`} />
         <div>
           <h1 className="text-xl font-bold">Hello, {userInfo?.name || "Mate"}</h1>
           <p className="text-sm text-gray-600">{today}</p>

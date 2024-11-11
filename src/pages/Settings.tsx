@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // import { FiSun, FaMoon, FaRegEdit, SaveIcon, HeartIcon } from 'react-icons';
 import { userIcons } from '@/utils/icons';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input, Spinner } from '@nextui-org/react';
 import { TimeInput } from "@nextui-org/date-input";
 import { FiSun } from "react-icons/fi";
 import { FaMoon } from "react-icons/fa6";
 import { FaRegEdit } from "react-icons/fa";
 // import { useTheme } from "@/hooks/use-theme";
 import { ThemeSwitch } from '@/components/common/theme-switch';
-import { formatTime, parseTime } from '@/utils/habitFunctions';
+import { formatTime, isBase64Image, parseTime } from '@/utils/habitFunctions';
 import { useOutletContext } from 'react-router-dom';
 import { useTheme } from 'next-themes';
 import { MoonFilledIcon, SunFilledIcon } from '@/components/common/icons';
@@ -25,6 +25,7 @@ const Settings: React.FC = () => {
     const [isEditingName, setIsEditingName] = useState(false);
     const [reminderTime, setReminderTime] = useState<Object>(parseTime(userInfo?.progressReminderTime));
     const [isEditingTime, setIsEditingTime] = useState(false);
+    const [uploading, setUploading] = useState(false);
 
     const handleProfileChange = (icon: string) => {
         let imageName = icon.split("/")[2].split('.')[0];
@@ -34,7 +35,7 @@ const Settings: React.FC = () => {
         setShowIcons(false);
     };
 
-    function convertToCamelCase(str) {
+    function convertToCamelCase(str: string) {
         return str
             .split('-')
             .map((word, index) => {
@@ -62,14 +63,42 @@ const Settings: React.FC = () => {
         setIsEditingName(false);
     };
 
-    const handleThemeToggle = () => {
-        setTheme(isDark ? 'light' : 'dark');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleButtonClick = () => {
+        fileInputRef.current?.click();
     };
 
-    const handleTimeSave = () => {
-        updateUserInfoInStorage("progressReminderTime", reminderTime)
-        setIsEditingTime(false);
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUploading(true)
+        const file = event.target.files?.[0];
+        if (file) {
+            const blob = new Blob([file], { type: file.type });
+
+            const base64 = await blobToBase64(blob);
+
+            updateUserInfoInStorage("avatar", base64);
+            setProfile(base64)
+        }
+
+        setUploading(false)
     };
+
+    // Convert Blob to base64 string
+    const blobToBase64 = (blob: Blob): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if (reader.result) {
+                    resolve(reader.result.toString());
+                }
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    };
+
 
 
     return (
@@ -79,14 +108,13 @@ const Settings: React.FC = () => {
                 {/* Profile Picture */}
                 <div className="relative flex flex-col justify-center items-center">
                     <img
-                        src={userIcons[profile] || userIcons.user}
+                        src={isBase64Image(profile) ? profile : userIcons[profile] || userIcons.user}
                         alt="Profile"
-                        className="rounded-full w-[150px] h-[150px]"
+                        className="rounded-full w-[150px] h-[150px] object-contain border-2 border-neutral-300"
                     />
                     {showIcons ? (
                         <div className="flex flex-wrap items-center space-x-2 mt-2 border-2 border-gray-200 p-4 rounded-lg">
                             {Object.values(userIcons).map((icon, idx) => {
-                                console.log(icon)
                                 return < img
                                     key={idx}
                                     src={icon}
@@ -98,12 +126,21 @@ const Settings: React.FC = () => {
                             })}
                         </div>
                     ) : (
-                        <Button
-                            className="mt-4 bg-button-gradient text-white"
-                            onClick={() => setShowIcons(true)}
-                        >
-                            Change
-                        </Button>
+                        <div className='flex items-center space-x-2'>
+                            <Button
+                                className="mt-4 bg-button-gradient text-white"
+                                onClick={() => setShowIcons(true)}
+                            >
+                                Change
+                            </Button>
+                            <Button
+                                className="mt-4 bg-button-gradient text-white"
+                                onClick={handleButtonClick}
+                            >
+                                {uploading ? <Spinner size='sm' color='default' /> : "Upload Now"}
+                            </Button>
+                            <input type="file" accept="image/*" className='hidden' ref={fileInputRef} onChange={handleFileChange} />
+                        </div>
                     )}
                 </div>
 
