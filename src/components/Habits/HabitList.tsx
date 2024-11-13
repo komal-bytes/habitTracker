@@ -18,6 +18,7 @@ const HabitList: React.FC<HabitListProps> = ({ habits }) => {
         );
     };
 
+    // console.log(habits)
 
     return (
         <Accordion

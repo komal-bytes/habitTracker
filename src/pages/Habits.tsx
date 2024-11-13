@@ -28,6 +28,7 @@ const Habits: React.FC = () => {
     const getListOfHabits = async () => {
         try {
             const habits = await getAllHabits();
+            // console.log(habits)
             setHabitsData(habits);
         } catch (err) {
 
@@ -70,10 +71,10 @@ const Habits: React.FC = () => {
                         className="flex justify-between items-center p-4 rounded-2xl border border-grey"
                     >
                         <div className="flex items-center  cursor-pointer"
-                         onClick={(e) => {
-                            setSelectedHabit(habit)
-                            !isOpen && onOpen();
-                        }}
+                            onClick={(e) => {
+                                setSelectedHabit(habit)
+                                !isOpen && onOpen();
+                            }}
                         >
                             <div className={`mr-5 rounded-full w-[40px] h-[40px] flex items-center justify-center border ${habitIconTypes?.[habit.iconType]?.gradient}`}>
                                 <img src={habitIconTypes[habit.iconType]?.icon} alt="" className='w-[25px] h-[25px]' />

@@ -20,7 +20,7 @@ const Calendar: React.FC<CalendarProps> = ({ habitLog }) => {
     const progressRef = useRef<HTMLDivElement>(null);
     const [selectedMonth, setSelectedMonth] = useState(dayjs().month()); // 0: January, 11: December
     const [selectedYear, setSelectedYear] = useState(dayjs().year());
-    const [showTooltip, setShowTooltip] = useState("");
+    const [showTooltip, setShowTooltip] = useState<Boolean | string>("");
     const currentDate = dayjs().format('YYYY-MM-DD');
 
 
